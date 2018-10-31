@@ -1,41 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Reflection;
+using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using PlayingWithMediatR.Exceptions;
+using PlayingWithMediatR.Infrastructure;
+using PlayingWithMediatR.MediatR;
+using PlayingWithMediatR.MediatR.Pipeline;
+using PlayingWithMediatR.Validation;
+using Serilog;
+using Serilog.Events;
 
 namespace PlayingWithMediatR
 {
+  // Github - MediatR: https://github.com/jbogard/MediatR
+  // FluentValidation: https://fluentvalidation.net
   public class Startup
   {
+    public IConfiguration Configuration { get; }
+
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
+
+      // --> Init: Logger
+      initLogger();
     }
 
-    public IConfiguration Configuration { get; }
-
-    // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+      // --> FluentValidation: Init (nuget: FluentValidation.AspNetCore)
+      // --> Filter: add custom exception filter
+      services.AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
+        .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+        .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
+
+      // --> MediatR: Add pipeline behaviors
+      services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
+      // --> MediatR: Add
+      services.AddMediatR(typeof(GetAllProduct).GetTypeInfo().Assembly);
+
+      // --> EF: Use in-memory database
+      services.AddDbContext<DataBaseContext>(options => options.UseInMemoryDatabase("dbName"));
+
+      // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
+      // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
+      services.Configure<ApiBehaviorOptions>(options =>
+      {
+        options.SuppressModelStateInvalidFilter = true;
+      });
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
       if (env.IsDevelopment())
-      {
         app.UseDeveloperExceptionPage();
-      }
 
       app.UseMvc();
+    }
+
+    private void initLogger()
+    {
+      Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Information()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}")
+        .CreateLogger();
     }
   }
 }

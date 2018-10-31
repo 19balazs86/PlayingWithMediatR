@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using PlayingWithMediatR.Infrastructure;
+using Serilog;
 
 namespace PlayingWithMediatR
 {
@@ -14,11 +11,28 @@ namespace PlayingWithMediatR
   {
     public static void Main(string[] args)
     {
-      CreateWebHostBuilder(args).Build().Run();
+      CreateWebHostBuilder(args).Build().SeedData().Run();
     }
 
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args)
-            .UseStartup<Startup>();
+      WebHost.CreateDefaultBuilder(args)
+        .UseStartup<Startup>()
+        .UseSerilog();
+  }
+
+  public static class WebHostExtensions
+  {
+    public static IWebHost SeedData(this IWebHost host)
+    {
+      using (IServiceScope scope = host.Services.CreateScope())
+      {
+        IServiceProvider services = scope.ServiceProvider;
+        DataBaseContext dbContext = services.GetService<DataBaseContext>();
+
+        DataBaseInitializer.Initialize(dbContext);
+      }
+
+      return host;
+    }
   }
 }
