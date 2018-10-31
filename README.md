@@ -1,4 +1,4 @@
-#Playing with MediatR
+# Playing with MediatR
 
 This small ASP.NET Core web application is an example for using [MediatR](https://github.com/jbogard/MediatR "MediatR").
 
