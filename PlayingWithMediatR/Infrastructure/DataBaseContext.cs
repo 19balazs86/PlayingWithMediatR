@@ -8,15 +8,11 @@ namespace PlayingWithMediatR.Infrastructure
   {
     public DbSet<Product> Products { get; set; }
 
+    public IQueryable<Product> ActiveProducts => Products.Where(p => !p.IsDeleted);
+
     public DataBaseContext(DbContextOptions<DataBaseContext> options) : base(options)
     {
 
     }
-  }
-
-  public static class ProductExtension
-  {
-    public static IQueryable<Product> ActiveProducts(this DataBaseContext dbContext)
-      => dbContext.Products.Where(p => !p.IsDeleted);
   }
 }

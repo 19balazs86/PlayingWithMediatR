@@ -26,7 +26,7 @@ namespace PlayingWithMediatR.MediatR
     /// </summary>
     public async Task<IEnumerable<Product>> Handle(GetAllProduct request, CancellationToken cancelToken)
     {
-      return await _dbContext.ActiveProducts().ToListAsync(cancelToken);
+      return await _dbContext.ActiveProducts.ToListAsync(cancelToken);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace PlayingWithMediatR.MediatR
     /// </summary>
     public async Task<Product> Handle(GetProductById request, CancellationToken cancelToken)
     {
-      return await _dbContext.ActiveProducts().FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
+      return await _dbContext.ActiveProducts.FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
     }
 
     /// <summary>
