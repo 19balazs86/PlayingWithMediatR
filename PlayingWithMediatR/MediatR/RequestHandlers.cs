@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PlayingWithMediatR.Entities;
 using PlayingWithMediatR.Infrastructure;
 
@@ -23,39 +24,37 @@ namespace PlayingWithMediatR.MediatR
     /// <summary>
     /// Handle: GetAllProduct
     /// </summary>
-    public Task<IEnumerable<Product>> Handle(GetAllProduct request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Product>> Handle(GetAllProduct request, CancellationToken cancelToken)
     {
-      return Task.FromResult(_dbContext.Products.AsEnumerable());
+      return await _dbContext.ActiveProducts().ToListAsync(cancelToken);
     }
 
     /// <summary>
     /// Handle: GetProductById
     /// </summary>
-    public Task<Product> Handle(GetProductById request, CancellationToken cancellationToken)
+    public async Task<Product> Handle(GetProductById request, CancellationToken cancelToken)
     {
-      return Task.FromResult(_dbContext.Products.FirstOrDefault(p => p.Id == request.Id));
+      return await _dbContext.ActiveProducts().FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
     }
 
     /// <summary>
     /// Handle: CreateProduct
     /// </summary>
-    public async Task<Product> Handle(CreateProduct request, CancellationToken cancellationToken)
+    public async Task<Product> Handle(CreateProduct request, CancellationToken cancelToken)
     {
-      int id = _dbContext.Products.Max(p => p.Id) + 1;
-
+      // Here you can use AutoMapper to mapping between CreateProduct and Product 
       Product product = new Product
       {
-        Id          = id,
         Name        = request.Name,
         Price       = request.Price,
         Description = request.Description,
       };
 
-      await _dbContext.Products.AddAsync(product);
+      EntityEntry<Product> entry = await _dbContext.Products.AddAsync(product, cancelToken);
 
-      await _dbContext.SaveChangesAsync();
+      await _dbContext.SaveChangesAsync(cancelToken);
 
-      return product;
+      return entry.Entity;
     }
   }
 }

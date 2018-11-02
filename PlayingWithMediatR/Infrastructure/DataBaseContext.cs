@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Entities;
 
 namespace PlayingWithMediatR.Infrastructure
@@ -11,5 +12,11 @@ namespace PlayingWithMediatR.Infrastructure
     {
 
     }
+  }
+
+  public static class ProductExtension
+  {
+    public static IQueryable<Product> ActiveProducts(this DataBaseContext dbContext)
+      => dbContext.Products.Where(p => !p.IsDeleted);
   }
 }
