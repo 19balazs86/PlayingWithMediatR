@@ -31,6 +31,7 @@ namespace PlayingWithMediatR.MediatR
 
       _dbContext.Entry(product).State = EntityState.Modified;
 
+      // Here you can have exception.
       await _dbContext.SaveChangesAsync(cancelToken);
     }
   }

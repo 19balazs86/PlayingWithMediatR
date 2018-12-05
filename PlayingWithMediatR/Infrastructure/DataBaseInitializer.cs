@@ -3,9 +3,9 @@ using PlayingWithMediatR.Entities;
 
 namespace PlayingWithMediatR.Infrastructure
 {
-  public class DataBaseInitializer
+  public static class DataBaseInitializer
   {
-    public static void Initialize(DataBaseContext context)
+    public static void Initialize(this DataBaseContext context)
     {
       context.Database.EnsureCreated();
 

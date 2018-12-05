@@ -17,8 +17,6 @@ using Serilog.Events;
 
 namespace PlayingWithMediatR
 {
-  // Github - MediatR: https://github.com/jbogard/MediatR
-  // FluentValidation: https://fluentvalidation.net
   public class Startup
   {
     public IConfiguration Configuration { get; }
@@ -36,7 +34,7 @@ namespace PlayingWithMediatR
       // --> FluentValidation: Init (nuget: FluentValidation.AspNetCore)
       // --> Filter: add custom exception filter
       services.AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
-        .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
         .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
       // --> MediatR: Add pipeline behaviors
@@ -69,6 +67,7 @@ namespace PlayingWithMediatR
       Log.Logger = new LoggerConfiguration()
         .MinimumLevel.Information()
         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("System", LogEventLevel.Warning)
         .Enrich.FromLogContext()
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}")
         .CreateLogger();

@@ -29,7 +29,7 @@ namespace PlayingWithMediatR
         IServiceProvider services = scope.ServiceProvider;
         DataBaseContext dbContext = services.GetService<DataBaseContext>();
 
-        DataBaseInitializer.Initialize(dbContext);
+        dbContext.Initialize();
       }
 
       return host;
