@@ -31,7 +31,7 @@ namespace PlayingWithMediatR.MediatR
 
       _dbContext.Entry(product).State = EntityState.Modified;
 
-      // Here you can have exception.
+      // Here you can have DbUpdateConcurrencyException exception, if the id is not exist.
       await _dbContext.SaveChangesAsync(cancelToken);
     }
   }

@@ -32,8 +32,7 @@ namespace PlayingWithMediatR
     public void ConfigureServices(IServiceCollection services)
     {
       // --> FluentValidation: Init (nuget: FluentValidation.AspNetCore)
-      // --> Filter: add custom exception filter
-      services.AddMvc(options => options.Filters.Add(typeof(CustomExceptionFilterAttribute)))
+      services.AddMvc()
         .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
         .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
@@ -56,9 +55,8 @@ namespace PlayingWithMediatR
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
-      // This is not necessary because of the CustomExceptionFilterAttribute.
-      if (env.IsDevelopment())
-        app.UseDeveloperExceptionPage();
+      // First: use our custom middleware to handle exceptions.
+      app.UseExceptionHandlingMiddleware();
 
       app.UseMvc();
     }

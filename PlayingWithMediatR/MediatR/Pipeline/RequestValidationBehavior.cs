@@ -19,7 +19,7 @@ namespace PlayingWithMediatR.MediatR.Pipeline
       _validators = validators;
     }
 
-    public Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
+    public Task<TResponse> Handle(TRequest request, CancellationToken cancelToken, RequestHandlerDelegate<TResponse> next)
     {
       ValidationContext validationContext = new ValidationContext(request);
 

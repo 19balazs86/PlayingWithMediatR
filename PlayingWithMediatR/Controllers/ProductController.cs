@@ -40,7 +40,7 @@ namespace PlayingWithMediatR.Controllers
     public async Task<ActionResult<Product>> Post([FromBody] CreateProduct createProduct)
     {
       // RequestValidationBehavior (using FluentValidation) throws an exception, if we have an invalid object.
-      // CustomExceptionFilterAttribute will catch that exception.
+      // Custom middleware will catch that exception.
       Product product = await _mediator.Send(createProduct);
 
       return CreatedAtAction(nameof(Get), new { product.Id }, product);
@@ -59,7 +59,7 @@ namespace PlayingWithMediatR.Controllers
       {
         ex.LogErrorIfSo($"Could not delete the product({id}).");
 
-        throw; // CustomExceptionFilterAttribute will catch this.
+        throw; // Custom middleware will catch that exception.
       }
     }
   }
