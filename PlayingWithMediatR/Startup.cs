@@ -56,6 +56,7 @@ namespace PlayingWithMediatR
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
     {
+      // This is not necessary because of the CustomExceptionFilterAttribute.
       if (env.IsDevelopment())
         app.UseDeveloperExceptionPage();
 

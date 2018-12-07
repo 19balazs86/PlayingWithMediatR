@@ -5,7 +5,7 @@ namespace PlayingWithMediatR.Exceptions
 {
   public abstract class CustomExceptionBase : Exception
   {
-    public bool IsAlreadyWritten { get; set; }
+    public bool IsAlreadyWritten { get; protected set; }
 
 
     public CustomExceptionBase() : base() { }

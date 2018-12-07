@@ -24,8 +24,8 @@ namespace PlayingWithMediatR.MediatR
     /// </summary>
     protected override async Task Handle(DeleteProduct request, CancellationToken cancelToken)
     {
-      if (_random.Next(5) == 3)
-        throw new DeleteProductException($"Something went wrong during deleting the product({request.Id})");
+      if (_random.NextDouble() < 0.2)
+        throw new DeleteProductException($"Random error during deleting the product({request.Id})");
 
       Product product = new Product { Id = request.Id, IsDeleted = true };
 
