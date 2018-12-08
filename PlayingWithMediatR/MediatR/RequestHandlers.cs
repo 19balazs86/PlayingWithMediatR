@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -10,51 +11,47 @@ using PlayingWithMediatR.Infrastructure;
 namespace PlayingWithMediatR.MediatR
 {
   public class RequestHandlers :
-    IRequestHandler<GetAllProduct, IEnumerable<Product>>,
-    IRequestHandler<GetProductById, Product>,
-    IRequestHandler<CreateProduct, Product>
+    IRequestHandler<GetAllProduct, IEnumerable<ProductDto>>,
+    IRequestHandler<GetProductById, ProductDto>,
+    IRequestHandler<CreateProduct, ProductDto>
   {
     private readonly DataBaseContext _dbContext;
+    private readonly IMapper _mapper;
 
-    public RequestHandlers(DataBaseContext dbContext)
+    public RequestHandlers(DataBaseContext dbContext, IMapper mapper)
     {
       _dbContext = dbContext;
+      _mapper    = mapper;
     }
-
+    
     /// <summary>
     /// Handle: GetAllProduct
     /// </summary>
-    public async Task<IEnumerable<Product>> Handle(GetAllProduct request, CancellationToken cancelToken)
+    public async Task<IEnumerable<ProductDto>> Handle(GetAllProduct request, CancellationToken cancelToken)
     {
-      return await _dbContext.ActiveProducts.ToListAsync(cancelToken);
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(cancelToken);
     }
 
     /// <summary>
     /// Handle: GetProductById
     /// </summary>
-    public async Task<Product> Handle(GetProductById request, CancellationToken cancelToken)
+    public async Task<ProductDto> Handle(GetProductById request, CancellationToken cancelToken)
     {
-      return await _dbContext.ActiveProducts.FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
     }
 
     /// <summary>
     /// Handle: CreateProduct
     /// </summary>
-    public async Task<Product> Handle(CreateProduct request, CancellationToken cancelToken)
+    public async Task<ProductDto> Handle(CreateProduct request, CancellationToken cancelToken)
     {
-      // Here you can use AutoMapper to mapping between CreateProduct and Product 
-      Product product = new Product
-      {
-        Name        = request.Name,
-        Price       = request.Price,
-        Description = request.Description,
-      };
+      Product product = _mapper.Map<Product>(request);
 
       EntityEntry<Product> entry = await _dbContext.Products.AddAsync(product, cancelToken);
 
       await _dbContext.SaveChangesAsync(cancelToken);
 
-      return entry.Entity;
+      return _mapper.Map<ProductDto>(entry.Entity);
     }
   }
 }

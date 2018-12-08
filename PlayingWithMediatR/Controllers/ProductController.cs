@@ -20,28 +20,28 @@ namespace PlayingWithMediatR.Controllers
     }
 
     [HttpGet]
-    public Task<IEnumerable<Product>> Get()
+    public Task<IEnumerable<ProductDto>> Get()
     {
       return _mediator.Send(new GetAllProduct());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> Get(int id)
+    public async Task<ActionResult<ProductDto>> Get(int id)
     {
-      Product product = await _mediator.Send(new GetProductById { Id = id });
+      ProductDto product = await _mediator.Send(new GetProductById { Id = id });
 
       if (product == null)
-        return NotFound(new { Message = $"Product({id}) is not found." });
+        return BadRequest(new { Message = $"Product({id}) is not found." });
 
       return Ok(product);
     }
 
     [HttpPost]
-    public async Task<ActionResult<Product>> Post([FromBody] CreateProduct createProduct)
+    public async Task<ActionResult<ProductDto>> Post([FromBody] CreateProduct createProduct)
     {
       // RequestValidationBehavior (using FluentValidation) throws an exception, if we have an invalid object.
       // Custom middleware will catch that exception.
-      Product product = await _mediator.Send(createProduct);
+      ProductDto product = await _mediator.Send(createProduct);
 
       return CreatedAtAction(nameof(Get), new { product.Id }, product);
     }
@@ -59,7 +59,7 @@ namespace PlayingWithMediatR.Controllers
       {
         ex.LogErrorIfSo($"Could not delete the product({id}).");
 
-        throw; // Custom middleware will catch that exception.
+        throw; // Custom middleware will catch thit exception.
       }
     }
   }

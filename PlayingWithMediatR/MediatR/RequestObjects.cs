@@ -7,7 +7,7 @@ namespace PlayingWithMediatR.MediatR
   /// <summary>
   /// Request for get all product.
   /// </summary>
-  public class GetAllProduct : IRequest<IEnumerable<Product>>
+  public class GetAllProduct : IRequest<IEnumerable<ProductDto>>
   {
     // Empty
   }
@@ -15,7 +15,7 @@ namespace PlayingWithMediatR.MediatR
   /// <summary>
   /// Request for get a product by id.
   /// </summary>
-  public class GetProductById : IRequest<Product>
+  public class GetProductById : IRequest<ProductDto>
   {
     public int Id { get; set; }
   }
@@ -23,7 +23,7 @@ namespace PlayingWithMediatR.MediatR
   /// <summary>
   /// Request for create a product.
   /// </summary>
-  public class CreateProduct : IRequest<Product>
+  public class CreateProduct : IRequest<ProductDto>
   {
     public string Name { get; set; }
     public int Price { get; set; }

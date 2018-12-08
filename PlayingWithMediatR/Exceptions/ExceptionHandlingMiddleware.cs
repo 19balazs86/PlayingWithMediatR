@@ -53,8 +53,10 @@ namespace PlayingWithMediatR.Exceptions
         const string errorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
 
         // To avoid multiple log.
-        if (exception is CustomExceptionBase customEx) customEx.LogErrorIfSo(errorMessage);
-        else Log.Error(exception, errorMessage);
+        if (exception is CustomExceptionBase customEx)
+          customEx.LogErrorIfSo(errorMessage);
+        else
+          Log.Error(exception, errorMessage);
 
         // Here you can create a custom object / message.
         responseText = JsonConvert.SerializeObject(new { StatusCode = statusCode, Error = exception.Message });
