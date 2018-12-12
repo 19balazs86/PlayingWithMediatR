@@ -18,6 +18,11 @@ namespace PlayingWithMediatR.MediatR
   public class GetProductById : IRequest<ProductDto>
   {
     public int Id { get; set; }
+
+    public GetProductById(int id)
+    {
+      Id = id;
+    }
   }
 
   /// <summary>
@@ -36,5 +41,10 @@ namespace PlayingWithMediatR.MediatR
   public class DeleteProduct : IRequest
   {
     public int Id { get; set; }
+
+    public DeleteProduct(int id)
+    {
+      Id = id;
+    }
   }
 }

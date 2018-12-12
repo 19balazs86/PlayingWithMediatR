@@ -27,29 +27,29 @@ namespace PlayingWithMediatR.MediatR
     /// <summary>
     /// Handle: GetAllProduct
     /// </summary>
-    public async Task<IEnumerable<ProductDto>> Handle(GetAllProduct request, CancellationToken cancelToken)
+    public async Task<IEnumerable<ProductDto>> Handle(GetAllProduct request, CancellationToken ct)
     {
-      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(cancelToken);
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
     }
 
     /// <summary>
     /// Handle: GetProductById
     /// </summary>
-    public async Task<ProductDto> Handle(GetProductById request, CancellationToken cancelToken)
+    public async Task<ProductDto> Handle(GetProductById request, CancellationToken ct)
     {
-      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, cancelToken);
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, ct);
     }
 
     /// <summary>
     /// Handle: CreateProduct
     /// </summary>
-    public async Task<ProductDto> Handle(CreateProduct request, CancellationToken cancelToken)
+    public async Task<ProductDto> Handle(CreateProduct request, CancellationToken ct)
     {
       Product product = _mapper.Map<Product>(request);
 
-      EntityEntry<Product> entry = await _dbContext.Products.AddAsync(product, cancelToken);
+      EntityEntry<Product> entry = await _dbContext.Products.AddAsync(product, ct);
 
-      await _dbContext.SaveChangesAsync(cancelToken);
+      await _dbContext.SaveChangesAsync(ct);
 
       return _mapper.Map<ProductDto>(entry.Entity);
     }
