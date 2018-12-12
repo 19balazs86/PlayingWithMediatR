@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using PlayingWithMediatR.Entities;
 
 namespace PlayingWithMediatR.Infrastructure
@@ -11,10 +12,10 @@ namespace PlayingWithMediatR.Infrastructure
 
       if (context.Products.Any()) return;
 
-      context.Products.AddRange(
-        new Product { Name = "P1Name", Price = 10, Description = "P1-Description" },
-        new Product { Name = "P2Name", Price = 20, Description = "P2-Description" },
-        new Product { Name = "P3Name", Price = 30, Description = "P3-Description" });
+      IEnumerable<Product> products = Enumerable.Range(1, 5).Select(x
+        => new Product { Name = $"Product-{x}", Price = x * 10, Description = $"P{x}-Description" });
+
+      context.Products.AddRange(products);
 
       context.SaveChanges();
     }
