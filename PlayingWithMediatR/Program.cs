@@ -27,7 +27,10 @@ namespace PlayingWithMediatR
       using (IServiceScope scope = host.Services.CreateScope())
       {
         IServiceProvider services = scope.ServiceProvider;
-        DataBaseContext dbContext = services.GetService<DataBaseContext>();
+        DataBaseContext dbContext = services.GetRequiredService<DataBaseContext>();
+
+        // Difference between GetService() and GetRequiredService()
+        // https://andrewlock.net/the-difference-between-getservice-and-getrquiredservice-in-asp-net-core
 
         dbContext.Initialize();
       }
