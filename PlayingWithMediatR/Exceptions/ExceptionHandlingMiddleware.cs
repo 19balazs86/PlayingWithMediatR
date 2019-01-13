@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Net;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Serilog;
@@ -62,10 +64,19 @@ namespace PlayingWithMediatR.Exceptions
         responseText = JsonConvert.SerializeObject(new { StatusCode = statusCode, Error = exception.Message });
       }
 
-      httpContext.Response.ContentType = "application/json";
+      httpContext.Response.ContentType = MediaTypeNames.Application.Json;
       httpContext.Response.StatusCode  = statusCode;
 
       await httpContext.Response.WriteAsync(responseText);
+    }
+
+    // This method can pass to the ApplicationBuilder.Run method in the Startup.
+    public static async Task ApplicationBuilderRun(HttpContext context)
+    {
+      IExceptionHandlerFeature exceptionHandlerFeature = context.Features.Get<IExceptionHandlerFeature>();
+
+      if (exceptionHandlerFeature != null)
+        await handleExceptionAsync(context, exceptionHandlerFeature.Error);
     }
   }
 }

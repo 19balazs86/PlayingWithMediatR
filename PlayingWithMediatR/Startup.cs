@@ -65,6 +65,10 @@ namespace PlayingWithMediatR
       // First: use our custom middleware to handle exceptions.
       app.UseExceptionHandlingMiddleware();
 
+      // This will handle the exception, like the middleware above. 
+      // But in addition, throws "An unhandled exception has occurred..."
+      //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
+
       app.UseMvc();
     }
 
