@@ -13,8 +13,6 @@ using PlayingWithMediatR.Infrastructure;
 using PlayingWithMediatR.MediatR;
 using PlayingWithMediatR.MediatR.Pipeline;
 using PlayingWithMediatR.Validation;
-using Serilog;
-using Serilog.Events;
 
 namespace PlayingWithMediatR
 {
@@ -25,9 +23,6 @@ namespace PlayingWithMediatR
     public Startup(IConfiguration configuration)
     {
       Configuration = configuration;
-
-      // --> Init: Logger
-      initLogger();
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -70,17 +65,6 @@ namespace PlayingWithMediatR
       //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
 
       app.UseMvc();
-    }
-
-    private void initLogger()
-    {
-      Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Information()
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("System", LogEventLevel.Warning)
-        .Enrich.FromLogContext()
-        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}")
-        .CreateLogger();
     }
   }
 }

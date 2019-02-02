@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using PlayingWithMediatR.Infrastructure;
 using Serilog;
+using Serilog.Events;
 
 namespace PlayingWithMediatR
 {
@@ -17,7 +18,17 @@ namespace PlayingWithMediatR
     public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
       WebHost.CreateDefaultBuilder(args)
         .UseStartup<Startup>()
-        .UseSerilog();
+        .UseSerilog(configureLogger);
+
+    private static void configureLogger(WebHostBuilderContext context, LoggerConfiguration configuration)
+    {
+      configuration
+        .MinimumLevel.Debug()
+        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("System", LogEventLevel.Warning)
+        //.Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}");
+    }
   }
 
   public static class WebHostExtensions
