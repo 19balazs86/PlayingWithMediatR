@@ -4,6 +4,7 @@ using FluentValidation.AspNetCore;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -65,6 +66,14 @@ namespace PlayingWithMediatR
       //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
 
       app.UseMvc();
+      app.Run(pageNotFoundHandler());
     }
+
+    private static RequestDelegate pageNotFoundHandler() =>
+      async httpContext =>
+      {
+        httpContext.Response.StatusCode = 404;
+        await httpContext.Response.WriteAsync("Page not found.");
+      };
   }
 }

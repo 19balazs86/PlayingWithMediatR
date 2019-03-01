@@ -137,6 +137,30 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "PageNotFound",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/PageNotFound",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"PageNotFound"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
