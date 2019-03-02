@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -66,14 +67,13 @@ namespace PlayingWithMediatR
       //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
 
       app.UseMvc();
-      app.Run(pageNotFoundHandler());
+      app.Run(pageNotFoundHandler);
     }
 
-    private static RequestDelegate pageNotFoundHandler() =>
-      async httpContext =>
-      {
-        httpContext.Response.StatusCode = 404;
-        await httpContext.Response.WriteAsync("Page not found.");
-      };
+    private static async Task pageNotFoundHandler(HttpContext context)
+    {
+      context.Response.StatusCode = 404;
+      await context.Response.WriteAsync("The requested endpoint is not found.");
+    }
   }
 }
