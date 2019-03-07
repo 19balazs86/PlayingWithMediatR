@@ -13,6 +13,8 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 - In order to achive the model validation in the MediatR pipline (instead of in the APIController), you have to [disable the built-in automatic model state validation.](https://www.talkingdotnet.com/disable-automatic-model-state-validation-in-asp-net-core-2-1 "disable the built-in automatic model state validation")
 - Article about the [Global Error Handling in ASP.NET Core Web API.](https://code-maze.com/global-error-handling-aspnetcore "Global Error Handling in ASP.NET Core Web API")
 - [EntityFrameworkCore](https://docs.microsoft.com/en-us/ef/core/index "EntityFrameworkCore") in-memory database.
-- [AutoMapper](https://github.com/AutoMapper/AutoMapper "AutoMapper") with EF.  [Automapper in ASP.NET Core.](https://dotnetcoretutorials.com/2017/09/23/using-automapper-asp-net-core "Automapper in ASP.NET Core")
+- [AutoMapper](https://github.com/AutoMapper/AutoMapper "AutoMapper") with EF.
+  - Dotnet Core Tutorials blog: [Automapper in ASP.NET Core](https://dotnetcoretutorials.com/2017/09/23/using-automapper-asp-net-core "Automapper in ASP.NET Core").
+  - Blog: [Simple and Fast Object Mapper](https://rehansaeed.com/a-simple-and-fast-object-mapper "Simple and Fast Object Mapper").
 - How to log the generated SQL queries by the EF.
 - Default 404 response. [Tips and tricks for ASP.NET Core applications](https://dusted.codes/advanced-tips-and-tricks-for-aspnet-core-applications "Tips and tricks for ASP.NET Core applications") from Dusted Codes.
