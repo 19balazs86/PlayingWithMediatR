@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
@@ -47,7 +48,7 @@ namespace PlayingWithMediatR
           .UseInMemoryDatabase("dbName"));
 
       // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
-      services.AddAutoMapper();
+      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
       // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
       // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
