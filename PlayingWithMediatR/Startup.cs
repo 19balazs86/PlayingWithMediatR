@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation.AspNetCore;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
-using PlayingWithMediatR.MediatR;
 using PlayingWithMediatR.MediatR.Pipeline;
 using PlayingWithMediatR.Validation;
 
@@ -23,10 +21,7 @@ namespace PlayingWithMediatR
   {
     public IConfiguration Configuration { get; }
 
-    public Startup(IConfiguration configuration)
-    {
-      Configuration = configuration;
-    }
+    public Startup(IConfiguration configuration) => Configuration = configuration;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -39,7 +34,7 @@ namespace PlayingWithMediatR
       services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
 
       // --> MediatR: Add
-      services.AddMediatR(typeof(GetAllProduct).GetTypeInfo().Assembly);
+      services.AddMediatR(Assembly.GetExecutingAssembly());
 
       // --> EF: Use in-memory database
       services.AddDbContext<DataBaseContext>(options =>
@@ -48,14 +43,11 @@ namespace PlayingWithMediatR
           .UseInMemoryDatabase("dbName"));
 
       // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
-      services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+      services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
 
       // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
       // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
-      services.Configure<ApiBehaviorOptions>(options =>
-      {
-        options.SuppressModelStateInvalidFilter = true;
-      });
+      services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
     }
 
     public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -68,6 +60,9 @@ namespace PlayingWithMediatR
       //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
 
       app.UseMvc();
+      
+      // Set-up a page not found middleware.
+      // https://wakeupandcode.com/middleware-in-asp-net-core/#branches
       app.Run(pageNotFoundHandler);
     }
 
