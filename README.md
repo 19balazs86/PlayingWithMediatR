@@ -18,3 +18,4 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
   - Blog: [Simple and Fast Object Mapper](https://rehansaeed.com/a-simple-and-fast-object-mapper "Simple and Fast Object Mapper").
 - How to log the generated SQL queries by the EF.
 - Default 404 response. [Tips and tricks for ASP.NET Core applications](https://dusted.codes/advanced-tips-and-tricks-for-aspnet-core-applications "Tips and tricks for ASP.NET Core applications") from Dusted Codes.
+- YouTube: [Clean architecture](https://www.youtube.com/watch?v=RQve_bD8X_M "Clean architecture") | GitHub repository: [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders "NorthwindTraders").
