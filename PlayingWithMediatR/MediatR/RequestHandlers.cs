@@ -14,6 +14,7 @@ namespace PlayingWithMediatR.MediatR
     IRequestHandler<GetAllProduct, IEnumerable<ProductDto>>,
     IRequestHandler<GetProductById, ProductDto>,
     IRequestHandler<CreateProduct, ProductDto>
+    //IRequestHandler<DeleteProduct>
   {
     private readonly DataBaseContext _dbContext;
     private readonly IMapper _mapper;
@@ -23,22 +24,20 @@ namespace PlayingWithMediatR.MediatR
       _dbContext = dbContext;
       _mapper    = mapper;
     }
-    
+
+    //public Task<Unit> Handle(DeleteProduct request, CancellationToken ct) => Task.FromResult(Unit.Value);
+
     /// <summary>
     /// Handle: GetAllProduct
     /// </summary>
     public async Task<IEnumerable<ProductDto>> Handle(GetAllProduct request, CancellationToken ct)
-    {
-      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
-    }
+      => await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
 
     /// <summary>
     /// Handle: GetProductById
     /// </summary>
     public async Task<ProductDto> Handle(GetProductById request, CancellationToken ct)
-    {
-      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, ct);
-    }
+      => await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, ct);
 
     /// <summary>
     /// Handle: CreateProduct

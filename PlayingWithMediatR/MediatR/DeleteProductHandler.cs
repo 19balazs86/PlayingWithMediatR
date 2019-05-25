@@ -9,6 +9,9 @@ using PlayingWithMediatR.Infrastructure;
 
 namespace PlayingWithMediatR.MediatR
 {
+  /// <summary>
+  /// RequestHandlers: There is another way to handle no return value request with IRequestHandler<DeleteProduct>.
+  /// </summary>
   public class DeleteProductHandler : AsyncRequestHandler<DeleteProduct>
   {
     private readonly Random _random = new Random();
