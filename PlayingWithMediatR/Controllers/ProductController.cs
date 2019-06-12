@@ -15,13 +15,10 @@ namespace PlayingWithMediatR.Controllers
   {
     private readonly IMediator _mediator;
 
-    public ProductController(IMediator mediator)
-    {
-      _mediator = mediator;
-    }
+    public ProductController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<IEnumerable<ProductDto>> Get(CancellationToken cancelToken = default(CancellationToken))
+    public async Task<IEnumerable<ProductDto>> Get(CancellationToken cancelToken = default)
     {
       // CancellationToken is given by the framework. Default value makes your test easier.
       // You can pass this CancellationToken to the Mediator method.
@@ -34,8 +31,8 @@ namespace PlayingWithMediatR.Controllers
     {
       ProductDto product = await _mediator.Send(new GetProductById(id));
 
-      if (product == null)
-        return BadRequest(new { Message = $"Product({id}) is not found." });
+      if (product is null)
+        return NotFound(new { Message = $"Product({id}) is not found." });
 
       return Ok(product);
     }
@@ -57,7 +54,7 @@ namespace PlayingWithMediatR.Controllers
       {
         await _mediator.Send(new DeleteProduct(id));
 
-        return NoContent();
+        return Ok();
       }
       catch (DeleteProductException ex)
       {
