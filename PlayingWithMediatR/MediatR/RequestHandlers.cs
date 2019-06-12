@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -6,12 +6,13 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PlayingWithMediatR.Entities;
+using PlayingWithMediatR.Extensions;
 using PlayingWithMediatR.Infrastructure;
 
 namespace PlayingWithMediatR.MediatR
 {
   public class RequestHandlers :
-    IRequestHandler<GetAllProduct, IEnumerable<ProductDto>>,
+    IRequestHandler<GetAllProduct, PageResult<ProductDto>>,
     IRequestHandler<GetProductById, ProductDto>,
     IRequestHandler<CreateProduct, ProductDto>
     //IRequestHandler<DeleteProduct>
@@ -30,8 +31,13 @@ namespace PlayingWithMediatR.MediatR
     /// <summary>
     /// Handle: GetAllProduct
     /// </summary>
-    public async Task<IEnumerable<ProductDto>> Handle(GetAllProduct request, CancellationToken ct)
-      => await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
+    public async Task<PageResult<ProductDto>> Handle(GetAllProduct request, CancellationToken ct)
+    {
+      // return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
+
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts.OrderBy(p => p.Id))
+        .PaginateAsync(request.Page, request.PageSize, ct);
+    }
 
     /// <summary>
     /// Handle: GetProductById

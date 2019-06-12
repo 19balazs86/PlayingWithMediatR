@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using PlayingWithMediatR.Entities;
 
 namespace PlayingWithMediatR.MediatR
@@ -7,7 +6,7 @@ namespace PlayingWithMediatR.MediatR
   /// <summary>
   /// Request for get all product.
   /// </summary>
-  public class GetAllProduct : IRequest<IEnumerable<ProductDto>>
+  public class GetAllProduct : PageQuery, IRequest<PageResult<ProductDto>>
   {
     // Empty
   }

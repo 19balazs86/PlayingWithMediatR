@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,12 +17,14 @@ namespace PlayingWithMediatR.Controllers
     public ProductController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    public async Task<IEnumerable<ProductDto>> Get(CancellationToken cancelToken = default)
+    public async Task<PageResult<ProductDto>> Get(
+      [FromQuery] GetAllProduct getAllProduct,
+      CancellationToken cancelToken = default)
     {
       // CancellationToken is given by the framework. Default value makes your test easier.
       // You can pass this CancellationToken to the Mediator method.
       // In this case, if the caller cancel the request, you can stop your process.
-      return await _mediator.Send(new GetAllProduct(), cancelToken);
+      return await _mediator.Send(getAllProduct, cancelToken);
     }
 
     [HttpGet("{id}")]
