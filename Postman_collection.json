@@ -10,12 +10,8 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
-					"raw": "http://localhost:5000/api/Product",
+					"raw": "http://localhost:5000/api/Product?page=2&pageSize=20",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -24,6 +20,16 @@
 					"path": [
 						"api",
 						"Product"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "2"
+						},
+						{
+							"key": "pageSize",
+							"value": "20"
+						}
 					]
 				}
 			},
@@ -34,10 +40,6 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": "http://localhost:5000/api/Product/1",
 					"protocol": "http",
@@ -121,7 +123,10 @@
 			"request": {
 				"method": "DELETE",
 				"header": [],
-				"body": {},
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
 				"url": {
 					"raw": "http://localhost:5000/api/Product/1",
 					"protocol": "http",
@@ -143,10 +148,6 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": "http://localhost:5000/api/PageNotFound",
 					"protocol": "http",
