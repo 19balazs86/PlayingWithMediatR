@@ -23,11 +23,6 @@
       set => _pageSize = value <= 0 ? PaginationDefaults.PageSize : value < PaginationDefaults.MaxPageSize ? value : PaginationDefaults.MaxPageSize;
     }
 
-    public PageQuery() : this(1, PaginationDefaults.PageSize)
-    {
-
-    }
-
     public PageQuery(int page = 1, int pageSize = PaginationDefaults.PageSize)
     {
       Page     = page;

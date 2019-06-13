@@ -8,7 +8,7 @@ namespace PlayingWithMediatR.MediatR
   /// </summary>
   public class GetAllProduct : PageQuery, IRequest<PageResult<ProductDto>>
   {
-    // Empty
+    public GetAllProduct() : base() { }
   }
 
   /// <summary>
