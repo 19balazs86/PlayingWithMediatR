@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using Bogus;
 using PlayingWithMediatR.Entities;
 
 namespace PlayingWithMediatR.Infrastructure
@@ -12,8 +12,14 @@ namespace PlayingWithMediatR.Infrastructure
 
       if (context.Products.Any()) return;
 
-      IEnumerable<Product> products = Enumerable.Range(1, 100).Select(x
-        => new Product { Name = $"Product-{x}", Price = x * 10, Description = $"P{x}-Description" });
+      int id = 1;
+
+      var products = new Faker<Product>()
+        .RuleFor(p => p.Id, _ => id++)
+        .RuleFor(p => p.Name, f => f.Commerce.ProductName())
+        .RuleFor(p => p.Price, f => f.Random.Number(10, 500))
+        .RuleFor(p => p.Description, f => f.Lorem.Sentence())
+        .Generate(100);
 
       context.Products.AddRange(products);
 
