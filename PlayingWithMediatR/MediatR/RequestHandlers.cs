@@ -6,8 +6,8 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PlayingWithMediatR.Entities;
-using PlayingWithMediatR.Extensions;
 using PlayingWithMediatR.Infrastructure;
+using PlayingWithMediatR.Pagination;
 
 namespace PlayingWithMediatR.MediatR
 {

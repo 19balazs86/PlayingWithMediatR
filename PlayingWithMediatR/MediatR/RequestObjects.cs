@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using PlayingWithMediatR.Entities;
+using PlayingWithMediatR.Pagination;
 
 namespace PlayingWithMediatR.MediatR
 {

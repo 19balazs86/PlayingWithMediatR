@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using PlayingWithMediatR.Entities;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.MediatR;
+using PlayingWithMediatR.Pagination;
 
 namespace PlayingWithMediatR.Controllers
 {

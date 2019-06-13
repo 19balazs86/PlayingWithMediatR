@@ -1,8 +1,8 @@
-﻿namespace PlayingWithMediatR.Entities
+﻿namespace PlayingWithMediatR.Pagination
 {
   public sealed class PaginationDefaults
   {
-    public const int PageSize    = 15;
+    public const int PageSize = 15;
     public const int MaxPageSize = 50;
   }
 
@@ -25,7 +25,7 @@
 
     public PageQuery(int page = 1, int pageSize = PaginationDefaults.PageSize)
     {
-      Page     = page;
+      Page = page;
       PageSize = pageSize;
     }
   }

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace PlayingWithMediatR.Entities
+namespace PlayingWithMediatR.Pagination
 {
   [DebuggerDisplay("Page = {Page}, PageCount = {PageCount}, TotalCount = {TotalCount}, IsEmpty = {IsEmpty}")]
   public class PageResult<TEntity>
@@ -28,9 +28,9 @@ namespace PlayingWithMediatR.Entities
     public PageResult(
       IEnumerable<TEntity> items, int page, int pageSize, int pageCount, long totalCount)
     {
-      Page       = page > pageCount ? pageCount : page;
-      PageSize   = pageSize;
-      PageCount  = pageCount;
+      Page = page > pageCount ? pageCount : page;
+      PageSize = pageSize;
+      PageCount = pageCount;
       TotalCount = totalCount;
 
       Items = items;

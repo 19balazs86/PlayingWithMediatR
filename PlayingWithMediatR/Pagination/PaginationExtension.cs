@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using PlayingWithMediatR.Entities;
+using PlayingWithMediatR.Pagination;
 
-namespace PlayingWithMediatR.Extensions
+namespace System.Linq
 {
   public static class PaginationExtension
   {
