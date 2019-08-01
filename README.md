@@ -2,6 +2,8 @@
 
 This small ASP.NET Core web application is an example for using the [MediatR](https://github.com/jbogard/MediatR) framework.
 
+[Separate branch](https://github.com/19balazs86/PlayingWithMediatR/tree/netcoreapp2.2) with the .NET Core 2.2 version.
+
 #### What is MediatR?
 > Supports request/response, commands, queries, notifications and events, sync and async with intelligent dispatching via C# generic variance.
 
