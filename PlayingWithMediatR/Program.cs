@@ -1,7 +1,7 @@
 ﻿using System;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using PlayingWithMediatR.Infrastructure;
 using Serilog;
 using Serilog.Events;
@@ -12,19 +12,25 @@ namespace PlayingWithMediatR
   {
     public static void Main(string[] args)
     {
-      CreateWebHostBuilder(args).Build().SeedData().Run();
+      CreateHostBuilder(args).Build().SeedData().Run();
     }
 
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-      WebHost.CreateDefaultBuilder(args)
-        .UseStartup<Startup>()
-        .UseSerilog(configureLogger);
+    public static IHostBuilder CreateHostBuilder(string[] args)
+    {
+      return Host
+        .CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webHostBuilder =>
+          webHostBuilder
+            .UseStartup<Startup>()
+            .UseSerilog(configureLogger));
+    }
 
     private static void configureLogger(WebHostBuilderContext context, LoggerConfiguration configuration)
     {
       configuration
         .MinimumLevel.Debug()
         .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+        .MinimumLevel.Override("Microsoft.Hosting", LogEventLevel.Information)
         .MinimumLevel.Override("System", LogEventLevel.Warning)
         //.Enrich.FromLogContext()
         .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}");
@@ -33,7 +39,7 @@ namespace PlayingWithMediatR
 
   public static class WebHostExtensions
   {
-    public static IWebHost SeedData(this IWebHost host)
+    public static IHost SeedData(this IHost host)
     {
       using (IServiceScope scope = host.Services.CreateScope())
       {

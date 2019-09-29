@@ -26,8 +26,8 @@ namespace PlayingWithMediatR
     public void ConfigureServices(IServiceCollection services)
     {
       // --> FluentValidation: Init (nuget: FluentValidation.AspNetCore)
-      services.AddMvc()
-        .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+      services.AddControllers()
+        .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
         .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
       // --> MediatR: Add pipeline behaviors
@@ -50,7 +50,7 @@ namespace PlayingWithMediatR
       services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
     }
 
-    public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
       // First: use our custom middleware to handle exceptions.
       app.UseExceptionHandlingMiddleware();
@@ -59,11 +59,16 @@ namespace PlayingWithMediatR
       // But in addition, throws "An unhandled exception has occurred..."
       //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
 
-      app.UseMvc();
-      
-      // Set-up a page not found middleware.
-      // https://wakeupandcode.com/middleware-in-asp-net-core/#branches
-      app.Run(pageNotFoundHandler);
+      app.UseRouting();
+
+      app.UseEndpoints(endpoints =>
+      {
+        endpoints.MapControllers();
+
+        // Set-up a page not found middleware.
+        // https://wakeupandcode.com/middleware-in-asp-net-core/#branches
+        endpoints.MapFallback(pageNotFoundHandler);
+      });
     }
 
     private static async Task pageNotFoundHandler(HttpContext context)
