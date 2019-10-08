@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net;
 using System.Net.Mime;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 using Serilog;
 
 namespace PlayingWithMediatR.Exceptions
@@ -48,7 +48,7 @@ namespace PlayingWithMediatR.Exceptions
       {
         // Handle the Validation Exception.
         statusCode   = (int)HttpStatusCode.BadRequest;
-        responseText = JsonConvert.SerializeObject(new { StatusCode = statusCode, Error = svException.Failures });
+        responseText = JsonSerializer.Serialize(new { StatusCode = statusCode, Error = svException.Failures });
       }
       else
       {
@@ -61,7 +61,7 @@ namespace PlayingWithMediatR.Exceptions
           Log.Error(exception, errorMessage);
 
         // Here you can create a custom object / message.
-        responseText = JsonConvert.SerializeObject(new { StatusCode = statusCode, Error = exception.Message });
+        responseText = JsonSerializer.Serialize(new { StatusCode = statusCode, Error = exception.Message });
       }
 
       httpContext.Response.ContentType = MediaTypeNames.Application.Json;
