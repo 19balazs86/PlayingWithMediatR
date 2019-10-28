@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -20,6 +19,9 @@ namespace PlayingWithMediatR.Exceptions
 
   public class ExceptionHandlingMiddleware
   {
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { IgnoreNullValues = true };
+    private const string _errorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
+
     private readonly RequestDelegate _next;
 
     public ExceptionHandlingMiddleware(RequestDelegate next)
@@ -41,33 +43,26 @@ namespace PlayingWithMediatR.Exceptions
 
     private static async Task handleExceptionAsync(HttpContext httpContext, Exception exception)
     {
-      int statusCode = (int)HttpStatusCode.InternalServerError;
-      string responseText;
+      ErrorResponse errorResponse;
 
-      if (exception is SummarizeValidationException svException)
-      {
-        // Handle the Validation Exception.
-        statusCode   = (int)HttpStatusCode.BadRequest;
-        responseText = JsonSerializer.Serialize(new { StatusCode = statusCode, Error = svException.Failures });
-      }
+      if (exception is SummarizeValidationException svException) // Handle the Validation Exception.
+        errorResponse = new ErrorResponse(svException.Failures);
       else
       {
-        const string errorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
-
         // To avoid multiple log.
         if (exception is CustomExceptionBase customEx)
-          customEx.LogErrorIfSo(errorMessage);
+          customEx.LogErrorIfSo(_errorMessage);
         else
-          Log.Error(exception, errorMessage);
+          Log.Error(exception, _errorMessage);
 
         // Here you can create a custom object / message.
-        responseText = JsonSerializer.Serialize(new { StatusCode = statusCode, Error = exception.Message });
+        errorResponse = new ErrorResponse(exception.Message);
       }
 
       httpContext.Response.ContentType = MediaTypeNames.Application.Json;
-      httpContext.Response.StatusCode  = statusCode;
+      httpContext.Response.StatusCode  = errorResponse.StatusCode;
 
-      await httpContext.Response.WriteAsync(responseText);
+      await JsonSerializer.SerializeAsync(httpContext.Response.Body, errorResponse, _jsonSerializerOptions);
     }
 
     // This method can pass to the ApplicationBuilder.Run method in the Startup.

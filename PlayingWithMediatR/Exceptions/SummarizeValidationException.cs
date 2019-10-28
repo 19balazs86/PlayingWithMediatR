@@ -7,9 +7,11 @@ namespace PlayingWithMediatR.Exceptions
 {
   public class SummarizeValidationException : Exception
   {
+    public const string ErrorMessage = "One or more validation errors occurred";
+
     public Dictionary<string, string[]> Failures { get; }
 
-    public SummarizeValidationException() : base("One or more validation failures have occurred.")
+    public SummarizeValidationException() : base(ErrorMessage)
     {
       Failures = new Dictionary<string, string[]>();
     }
@@ -18,7 +20,7 @@ namespace PlayingWithMediatR.Exceptions
     {
       IEnumerable<string> propNames = failures.Select(e => e.PropertyName).Distinct();
 
-      foreach (var propName in propNames)
+      foreach (string propName in propNames)
       {
         string[] propertyFailures = failures
           .Where(vf => vf.PropertyName == propName)
