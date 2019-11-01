@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Bogus;
 using PlayingWithMediatR.Entities;
 
@@ -6,9 +7,9 @@ namespace PlayingWithMediatR.Infrastructure
 {
   public static class DataBaseInitializer
   {
-    public static void Initialize(this DataBaseContext context)
+    public static async Task SeedAsync(this DataBaseContext context)
     {
-      context.Database.EnsureCreated();
+      await context.Database.EnsureCreatedAsync();
 
       if (context.Products.Any()) return;
 
@@ -19,9 +20,9 @@ namespace PlayingWithMediatR.Infrastructure
         .RuleFor(p => p.Description, f => f.Lorem.Sentence())
         .Generate(100);
 
-      context.Products.AddRange(products);
+      await context.Products.AddRangeAsync(products);
 
-      context.SaveChanges();
+      await context.SaveChangesAsync();
     }
   }
 }

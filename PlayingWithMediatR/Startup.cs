@@ -27,7 +27,6 @@ namespace PlayingWithMediatR
     {
       // --> FluentValidation: Init (nuget: FluentValidation.AspNetCore)
       services.AddControllers()
-        .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
         .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
       // --> MediatR: Add pipeline behaviors
@@ -48,6 +47,9 @@ namespace PlayingWithMediatR
       // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
       // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
       services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+
+      // Add HostedService to seed database.
+      services.AddHostedService<DatabaseSeedHostedService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
