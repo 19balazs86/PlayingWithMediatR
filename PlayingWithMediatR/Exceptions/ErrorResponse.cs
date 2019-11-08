@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Net;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlayingWithMediatR.Exceptions
 {
@@ -13,14 +13,14 @@ namespace PlayingWithMediatR.Exceptions
 
     public ErrorResponse(Dictionary<string, string[]> validationErrors)
     {
-      StatusCode       = (int)HttpStatusCode.BadRequest;
+      StatusCode       = Status400BadRequest; // using static
       Message          = SummarizeValidationException.ErrorMessage;
       ValidationErrors = validationErrors;
     }
 
     public ErrorResponse(string message)
     {
-      StatusCode = (int)HttpStatusCode.InternalServerError;
+      StatusCode = Status500InternalServerError;
       Message    = message;
     }
   }
