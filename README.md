@@ -24,4 +24,4 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 - [Running async tasks on app Startup](https://andrewlock.net/running-async-tasks-on-app-startup-in-asp-net-core-3) *(.NET Core 3) (Andrew Lock)*
 - How to log the generated SQL queries by the EF.
 - Default 404 response. [Tips and tricks for ASP.NET Core applications](https://dusted.codes/advanced-tips-and-tricks-for-aspnet-core-applications) *(Dusted Codes)*
-- YouTube: [Clean architecture](https://www.youtube.com/watch?v=RQve_bD8X_M) | GitHub: [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders).
+- YouTube: [Clean architecture](https://www.youtube.com/watch?v=5OtUm1BLmG0) | GitHub: [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders).
