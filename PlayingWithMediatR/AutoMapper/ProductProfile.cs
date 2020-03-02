@@ -10,7 +10,8 @@ namespace PlayingWithMediatR.AutoMapper
     public ProductProfile()
     {
       CreateMap<CreateProduct, Product>()
-        .ForMember(p => p.CreatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow));
+        .ForMember(p => p.CreatedDate, opt => opt.MapFrom(_ => DateTime.UtcNow))
+        .ForMember(p => p.CategoryEnum, opt => opt.MapFrom(_ => CategoryEnum.Category1));
 
       CreateMap<Product, ProductDto>();
     }
