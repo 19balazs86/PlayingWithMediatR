@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlayingWithMediatR.Entities
 {
@@ -10,5 +11,6 @@ namespace PlayingWithMediatR.Entities
     public int Price { get; set; }
     public string Description { get; set; }
     public bool IsDeleted { get; set; }
+    public DateTime CreatedDate { get; set; }
   }
 }

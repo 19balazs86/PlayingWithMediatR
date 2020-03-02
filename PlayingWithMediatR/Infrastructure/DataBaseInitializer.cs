@@ -18,6 +18,7 @@ namespace PlayingWithMediatR.Infrastructure
         .RuleFor(p => p.Name, f => f.Commerce.ProductName())
         .RuleFor(p => p.Price, f => f.Random.Number(10, 500))
         .RuleFor(p => p.Description, f => f.Lorem.Sentence())
+        .RuleFor(p => p.CreatedDate, f => f.Date.Recent(10).ToUniversalTime())
         .Generate(100);
 
       await context.Products.AddRangeAsync(products);
