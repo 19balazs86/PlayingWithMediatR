@@ -35,7 +35,7 @@ namespace PlayingWithMediatR.MediatR
     {
       // return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).ToListAsync(ct);
 
-      return await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts.OrderBy(p => p.Id))
+      return await _mapper.ProjectTo<ProductDto>(_dbContext.Products.OrderBy(p => p.Id))
         .PaginateAsync(request.Page, request.PageSize, ct);
     }
 
@@ -43,7 +43,7 @@ namespace PlayingWithMediatR.MediatR
     /// Handle: GetProductById
     /// </summary>
     public async Task<ProductDto> Handle(GetProductById request, CancellationToken ct)
-      => await _mapper.ProjectTo<ProductDto>(_dbContext.ActiveProducts).FirstOrDefaultAsync(p => p.Id == request.Id, ct);
+      => await _mapper.ProjectTo<ProductDto>(_dbContext.Products).FirstOrDefaultAsync(p => p.Id == request.Id, ct);
 
     /// <summary>
     /// Handle: CreateProduct
