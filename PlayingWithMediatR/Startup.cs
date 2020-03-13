@@ -59,7 +59,7 @@ namespace PlayingWithMediatR
 
       // This will handle the exception, like the middleware above. 
       // But in addition, throws "An unhandled exception has occurred..."
-      //app.UseExceptionHandler(appBuilder => appBuilder.Run(ExceptionHandlingMiddleware.ApplicationBuilderRun));
+      //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
 
       app.UseRouting();
 

@@ -1,27 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlayingWithMediatR.Exceptions
 {
-  public class ErrorResponse
+  public class ErrorResponse : ProblemDetails
   {
-    public int StatusCode { get; set; }
-    public string Message { get; set; }
-    public Dictionary<string, string[]> ValidationErrors { get; set; }
-
-    public ErrorResponse() { }
-
-    public ErrorResponse(Dictionary<string, string[]> validationErrors)
+    private ErrorResponse(string traceId) : base()
     {
-      StatusCode       = Status400BadRequest; // using static
-      Message          = SummarizeValidationException.ErrorMessage;
-      ValidationErrors = validationErrors;
+      if (!string.IsNullOrWhiteSpace(traceId))
+        Extensions["traceId"] = traceId;
     }
 
-    public ErrorResponse(string message)
+    public ErrorResponse(Dictionary<string, string[]> validationErrors, string traceId)
+      : this(traceId)
     {
-      StatusCode = Status500InternalServerError;
-      Message    = message;
+      Status = Status400BadRequest; // using static
+      Title  = SummarizeValidationException.ErrorMessage;
+
+      Extensions["validationErrors"] = validationErrors;
+    }
+
+    public ErrorResponse(Exception ex, bool includeDetails, string traceId)
+      : this(traceId)
+    {
+      Status = Status500InternalServerError;
+      Title  = includeDetails ? $"An error occured: '{ex.Message}'" : "An error occured";
+      Detail = includeDetails ? ex.ToString() : null;
     }
   }
 }
