@@ -9,7 +9,7 @@ using PlayingWithMediatR.Exceptions;
 
 namespace PlayingWithMediatR.MediatR.Pipeline
 {
-  public class RequestValidationBehavior<TRequest, TResponse> :
+    public class RequestValidationBehavior<TRequest, TResponse> :
     IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
   {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
@@ -21,7 +21,7 @@ namespace PlayingWithMediatR.MediatR.Pipeline
 
     public Task<TResponse> Handle(TRequest request, CancellationToken cancelToken, RequestHandlerDelegate<TResponse> next)
     {
-      ValidationContext validationContext = new ValidationContext(request);
+     var validationContext = new ValidationContext<TRequest>(request);
 
       ValidationFailure[] failures = _validators
         .Select(v => v.Validate(validationContext))
