@@ -38,6 +38,7 @@ namespace PlayingWithMediatR
       // --> EF: Use in-memory database
       services.AddDbContext<DataBaseContext>(options =>
         options
+          //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
           //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
           .UseInMemoryDatabase("dbName"));
 
