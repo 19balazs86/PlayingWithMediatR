@@ -1,34 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using FluentValidation.Results;
 
 namespace PlayingWithMediatR.Exceptions
 {
+#pragma warning disable RCS1194 // Implement exception constructors.
   public class SummarizeValidationException : Exception
+#pragma warning restore RCS1194 // Implement exception constructors.
   {
-    public const string ErrorMessage = "One or more validation errors occurred";
+    public const string ErrorMessage = "One or more validation errors occurred.";
 
-    public Dictionary<string, string[]> Failures { get; }
+    public Dictionary<string, string[]> Errors { get; }
 
-    public SummarizeValidationException() : base(ErrorMessage)
+    public SummarizeValidationException(Dictionary<string, string[]> errors)
+      : base(ErrorMessage)
     {
-      Failures = new Dictionary<string, string[]>();
-    }
-
-    public SummarizeValidationException(IEnumerable<ValidationFailure> failures) : this()
-    {
-      IEnumerable<string> propNames = failures.Select(e => e.PropertyName).Distinct();
-
-      foreach (string propName in propNames)
-      {
-        string[] propertyFailures = failures
-          .Where(vf => vf.PropertyName == propName)
-          .Select(vf => vf.ErrorMessage)
-          .ToArray();
-
-        Failures.Add(propName, propertyFailures);
-      }
+      Errors = errors;
     }
   }
 }

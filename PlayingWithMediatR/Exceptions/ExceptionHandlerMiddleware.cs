@@ -62,7 +62,7 @@ namespace PlayingWithMediatR.Exceptions
       ErrorResponse errorResponse;
 
       if (ex is SummarizeValidationException svException) // Handle the Validation Exception.
-        errorResponse = new ErrorResponse(svException.Failures, traceId);
+        errorResponse = new ErrorResponse(svException.Errors, traceId);
       else
       {
         // To avoid multiple log.

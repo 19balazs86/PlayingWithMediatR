@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
@@ -7,23 +8,24 @@ namespace PlayingWithMediatR.Exceptions
 {
   public class ErrorResponse : ProblemDetails
   {
-    private ErrorResponse(string traceId) : base()
-    {
-      if (!string.IsNullOrWhiteSpace(traceId))
-        Extensions["traceId"] = traceId;
-    }
+    [JsonPropertyName("traceId")]
+    public string TraceId { get; }
 
-    public ErrorResponse(Dictionary<string, string[]> validationErrors, string traceId)
-      : this(traceId)
+    [JsonPropertyName("errors")]
+    public IDictionary<string, string[]> Errors { get; } // Like in the ValidationProblemDetails built-in class
+
+    public ErrorResponse(string traceId)
+      => TraceId = traceId;
+
+    public ErrorResponse(Dictionary<string, string[]> validationErrors, string traceId) : this(traceId)
     {
       Status = Status400BadRequest; // using static
       Title  = SummarizeValidationException.ErrorMessage;
 
-      Extensions["validationErrors"] = validationErrors;
+      Errors = validationErrors;
     }
 
-    public ErrorResponse(Exception ex, bool includeDetails, string traceId)
-      : this(traceId)
+    public ErrorResponse(Exception ex, bool includeDetails, string traceId) : this(traceId)
     {
       Status = Status500InternalServerError;
       Title  = includeDetails ? $"An error occured: '{ex.Message}'" : "An error occured";
