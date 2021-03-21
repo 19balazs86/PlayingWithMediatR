@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using PlayingWithMediatR.Entities;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
@@ -32,7 +33,9 @@ namespace PlayingWithMediatR.MediatR
 
       Product product = new Product { Id = request.Id, IsDeleted = true };
 
-      _dbContext.Entry(product).State = EntityState.Modified;
+      EntityEntry<Product> entry = _dbContext.Attach(product);
+
+      entry.Property(p => p.IsDeleted).IsModified = true;
 
       // Here you can have DbUpdateConcurrencyException exception, if the id is not exist.
       await _dbContext.SaveChangesAsync(cancelToken);
