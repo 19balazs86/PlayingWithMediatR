@@ -12,6 +12,7 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 #### In the example you can find
 
 - [FluentValidation](https://fluentvalidation.net) to validate the MediatR pipeline
+- [Pipeline validation with FluentValidation](https://code-maze.com/cqrs-mediatr-fluentvalidation) *(Code Maze)*
 - In order to achieve the model validation in the MediatR pipeline (instead of in the APIController), you have to [disable the built-in automatic model state validation](https://www.talkingdotnet.com/disable-automatic-model-state-validation-in-asp-net-core-2-1)
 - Custom error handling
   - [Creating a custom ErrorHandlerMiddleware function](https://andrewlock.net/creating-a-custom-error-handler-middleware-function) *(Andrew Lock)*
