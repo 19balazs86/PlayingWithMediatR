@@ -1,12 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace PlayingWithMediatR.Exceptions
@@ -30,7 +26,7 @@ namespace PlayingWithMediatR.Exceptions
 
   public class ExceptionHandlerMiddleware
   {
-    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { IgnoreNullValues = true };
+    private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
     private const string _errorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
 
     private readonly RequestDelegate _next;
