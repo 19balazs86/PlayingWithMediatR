@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using MediatR;
 using PlayingWithMediatR.Exceptions;
@@ -19,7 +15,7 @@ namespace PlayingWithMediatR.MediatR.Pipeline
       _validators = validators;
     }
 
-    public Task<TResponse> Handle(TRequest request, CancellationToken cancelToken, RequestHandlerDelegate<TResponse> next)
+    public Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
       if (!validateRequest(request, out var errors))
         throw new SummarizeValidationException(errors);
