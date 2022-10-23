@@ -162,6 +162,28 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Stream-RandomNumbers",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/MediatorStream/RandomNumbers/5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"MediatorStream",
+						"RandomNumbers",
+						"5"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
