@@ -7,7 +7,9 @@ using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
 using PlayingWithMediatR.MediatR.Pipeline;
 using PlayingWithMediatR.Validation;
+using System.Net.Mime;
 using System.Reflection;
+using System.Text.Json;
 
 namespace PlayingWithMediatR
 {
@@ -77,8 +79,16 @@ namespace PlayingWithMediatR
 
         private static async Task pageNotFoundHandler(HttpContext context)
         {
-            context.Response.StatusCode = 404;
-            await context.Response.WriteAsync("The requested endpoint is not found.");
+            context.Response.ContentType = MediaTypeNames.Application.Json;
+            context.Response.StatusCode  = StatusCodes.Status404NotFound;
+
+            var problemDetails = new ProblemDetails
+            {
+                Title = "The requested endpoint is not found.",
+                Status = StatusCodes.Status404NotFound,
+            };
+
+            await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
         }
     }
 }
