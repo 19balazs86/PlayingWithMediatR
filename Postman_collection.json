@@ -1,8 +1,9 @@
 {
 	"info": {
 		"_postman_id": "712b0bc9-22cd-4afe-b546-f0bb5fd51c88",
-		"name": "PlayingWithMediatR",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"name": "MediatR",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8316451"
 	},
 	"item": [
 		{
@@ -11,7 +12,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/api/Product?page=2&pageSize=20",
+					"raw": "http://localhost:5000/api/Product?pageNumber=2&pageSize=20",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -23,7 +24,7 @@
 					],
 					"query": [
 						{
-							"key": "page",
+							"key": "pageNumber",
 							"value": "2"
 						},
 						{

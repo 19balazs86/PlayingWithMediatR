@@ -1,36 +1,32 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Pagination;
 
-namespace System.Linq
+namespace System.Linq;
+
+public static class PaginationExtension
 {
-  public static class PaginationExtension
-  {
-    public static async Task<PageResult<T>> PaginateAsync<T>(
-      this IQueryable<T> query,
-      int page,
-      int pageSize,
-      CancellationToken ct = default)
+    public static async Task<PageResult<T>> ToPageResultAsync<T>(
+        this IQueryable<T> source,
+        int pageNumber,
+        int pageSize,
+        CancellationToken ct = default)
     {
-      long totalCount = await query.CountAsync(ct);
+        long totalCount = await source.CountAsync(ct);
 
-      if (totalCount == 0)
-        return PageResult<T>.Empty;
+        if (totalCount == 0)
+            return PageResult<T>.Empty;
 
-      int pageCount = (int)Math.Ceiling((decimal)totalCount / pageSize);
+        int totalPages = (int)Math.Ceiling((decimal)totalCount / pageSize);
 
-      if (page > pageCount) page = pageCount;
+        if (pageNumber > totalPages) pageNumber = totalPages;
 
-      int skip = (page - 1) * pageSize;
+        int skip = (pageNumber - 1) * pageSize;
 
-      IEnumerable<T> items = await query
-        .Skip(skip)
-        .Take(pageSize)
-        .ToListAsync(ct);
+        IEnumerable<T> items = await source
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync(ct);
 
-      return new PageResult<T>(items, page, pageSize, pageCount, totalCount);
+        return new PageResult<T>(items, pageNumber, pageSize, totalPages, totalCount);
     }
-  }
 }

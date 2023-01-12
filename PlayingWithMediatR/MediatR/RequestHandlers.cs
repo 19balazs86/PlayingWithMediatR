@@ -36,7 +36,7 @@ namespace PlayingWithMediatR.MediatR
 
             return await _mapper
                 .ProjectTo<ProductDto>(products)
-                .PaginateAsync(request.Page, request.PageSize, ct);
+                .ToPageResultAsync(request.PageNumber, request.PageSize, ct);
         }
 
         /// <summary>
