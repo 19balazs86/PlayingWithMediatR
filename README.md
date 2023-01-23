@@ -28,3 +28,4 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 - How to log the generated SQL queries by the EF
 - Default 404 response. [Tips and tricks for ASP.NET Core applications](https://dusted.codes/advanced-tips-and-tricks-for-aspnet-core-applications) 📓DustedCodes
 - [Clean architecture](https://www.youtube.com/watch?v=5OtUm1BLmG0) 📽️1h | [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders) 👤JasonTaylor
+- [Generating realistic data with Bogus](https://code-maze.com/data-generation-bogus-dotnet) 📓CodeMaze
