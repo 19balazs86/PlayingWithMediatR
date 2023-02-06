@@ -1,30 +1,21 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿namespace PlayingWithMediatR.Infrastructure;
 
-namespace PlayingWithMediatR.Infrastructure
+public class DatabaseSeedHostedService : IHostedService
 {
-  public class DatabaseSeedHostedService : IHostedService
-  {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public DatabaseSeedHostedService(IServiceProvider serviceProvider)
-      => _serviceProvider = serviceProvider;
+    public DatabaseSeedHostedService(IServiceScopeFactory serviceScopeFactory) => _serviceScopeFactory = serviceScopeFactory;
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-      using IServiceScope scope = _serviceProvider.CreateScope();
+        using IServiceScope scope = _serviceScopeFactory.CreateScope();
 
-      // Difference between GetService() and GetRequiredService()
-      // https://andrewlock.net/the-difference-between-getservice-and-getrquiredservice-in-asp-net-core
-      DataBaseContext dbContext = scope.ServiceProvider.GetRequiredService<DataBaseContext>();
+        // Difference between GetService() and GetRequiredService()
+        // https://andrewlock.net/the-difference-between-getservice-and-getrquiredservice-in-asp-net-core
+        DataBaseContext dbContext = scope.ServiceProvider.GetRequiredService<DataBaseContext>();
 
-      await dbContext.SeedAsync();
+        await dbContext.SeedAsync();
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
-      => Task.CompletedTask;
-  }
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
