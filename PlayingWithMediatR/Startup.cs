@@ -11,84 +11,88 @@ using System.Net.Mime;
 using System.Reflection;
 using System.Text.Json;
 
-namespace PlayingWithMediatR
+namespace PlayingWithMediatR;
+
+public sealed class Startup
 {
-    public class Startup
+    public IConfiguration Configuration { get; }
+
+    public Startup(IConfiguration configuration) => Configuration = configuration;
+
+    public void ConfigureServices(IServiceCollection services)
     {
-        public IConfiguration Configuration { get; }
+        services.AddControllers(); // Old: .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        // --> FluentValidation: Init
+        // Warning: No longer recommend using auto-validation. Read the GitHub description
+        // https://github.com/FluentValidation/FluentValidation.AspNetCore
+        // Asynchronous rules in validators will not be able to run. You will receive an exception at runtime
+        // BUT in this example the RequestValidationBehavior MediatR pipeline handle is with ValidateAsync method
+        services
+            .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
+            .AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-        public void ConfigureServices(IServiceCollection services)
+        // --> MediatR: Add pipeline behaviors
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+
+        // --> MediatR: Add
+        services.AddMediatR(config =>
         {
-            services.AddControllers(); // Old: .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
+            config.RegisterServicesFromAssemblyContaining<Startup>();
 
-            // --> FluentValidation: Init
-            // Warning: No longer recommend using auto-validation. Read the GitHub description
-            // https://github.com/FluentValidation/FluentValidation.AspNetCore
-            // Asynchronous rules in validators will not be able to run. You will receive an exception at runtime
-            // BUT in this example the RequestValidationBehavior MediatR pipeline handle is with ValidateAsync method
-            services
-                .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
-                .AddValidatorsFromAssemblyContaining<ProductValidator>();
+            config.Lifetime = ServiceLifetime.Scoped;
+        });
 
-            // --> MediatR: Add pipeline behaviors
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
+        // --> EF: Use in-memory database
+        services.AddDbContext<DataBaseContext>(options =>
+          options
+            //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
+            //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
+            .UseInMemoryDatabase("dbName"));
 
-            // --> MediatR: Add
-            services.AddMediatR(Assembly.GetExecutingAssembly());
+        // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
+        services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
 
-            // --> EF: Use in-memory database
-            services.AddDbContext<DataBaseContext>(options =>
-              options
-                //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
-                //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
-                .UseInMemoryDatabase("dbName"));
+        // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
+        // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
+        services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
 
-            // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
-            services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
+        // Add HostedService to seed database.
+        services.AddHostedService<DatabaseSeedHostedService>();
+    }
 
-            // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
-            // Otherwise the framework will intercept the query in the ModelState filter (but using the FluentValidation)
-            services.Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true);
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        // First: use our custom middleware to handle exceptions.
+        app.UseExceptionHandlingMiddleware();
 
-            // Add HostedService to seed database.
-            services.AddHostedService<DatabaseSeedHostedService>();
-        }
+        // This will handle the exception, like the middleware above.
+        // But in addition, throws "An unhandled exception has occurred..."
+        //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        app.UseRouting();
+
+        app.UseEndpoints(endpoints =>
         {
-            // First: use our custom middleware to handle exceptions.
-            app.UseExceptionHandlingMiddleware();
+            endpoints.MapControllers();
 
-            // This will handle the exception, like the middleware above.
-            // But in addition, throws "An unhandled exception has occurred..."
-            //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
+            // Set-up a page not found middleware.
+            // https://wakeupandcode.com/middleware-in-asp-net-core/#branches
+            endpoints.MapFallback(pageNotFoundHandler);
+        });
+    }
 
-            app.UseRouting();
+    private static async Task pageNotFoundHandler(HttpContext context)
+    {
+        context.Response.ContentType = MediaTypeNames.Application.Json;
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-
-                // Set-up a page not found middleware.
-                // https://wakeupandcode.com/middleware-in-asp-net-core/#branches
-                endpoints.MapFallback(pageNotFoundHandler);
-            });
-        }
-
-        private static async Task pageNotFoundHandler(HttpContext context)
+        var problemDetails = new ProblemDetails
         {
-            context.Response.ContentType = MediaTypeNames.Application.Json;
-            context.Response.StatusCode  = StatusCodes.Status404NotFound;
+            Title = "The requested endpoint is not found.",
+            Status = StatusCodes.Status404NotFound,
+        };
 
-            var problemDetails = new ProblemDetails
-            {
-                Title = "The requested endpoint is not found.",
-                Status = StatusCodes.Status404NotFound,
-            };
-
-            await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
-        }
+        await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
     }
 }

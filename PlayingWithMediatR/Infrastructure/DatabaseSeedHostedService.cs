@@ -1,6 +1,6 @@
 ﻿namespace PlayingWithMediatR.Infrastructure;
 
-public class DatabaseSeedHostedService : IHostedService
+public sealed class DatabaseSeedHostedService : IHostedService
 {
     private readonly IServiceScopeFactory _serviceScopeFactory;
 

@@ -1,15 +1,12 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿namespace PlayingWithMediatR.Infrastructure;
 
-namespace PlayingWithMediatR.Infrastructure
+public sealed class EFSerilogLoggerProvider : ILoggerProvider
 {
-  public class EFSerilogLoggerProvider : ILoggerProvider
-  {
     public static readonly LoggerFactory LoggerFactory = new LoggerFactory(new[] { new EFSerilogLoggerProvider() });
 
     public ILogger CreateLogger(string categoryName)
     {
-      return new EFSerilogLogger();
+        return new EFSerilogLogger();
     }
 
     public void Dispose()
@@ -17,20 +14,19 @@ namespace PlayingWithMediatR.Infrastructure
 
     private class EFSerilogLogger : ILogger
     {
-      public bool IsEnabled(LogLevel logLevel)
-      {
-        return true;
-      }
+        public bool IsEnabled(LogLevel logLevel)
+        {
+            return true;
+        }
 
-      public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
-      {
-        Serilog.Log.Information(formatter(state, exception));
-      }
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        {
+            Serilog.Log.Information(formatter(state, exception));
+        }
 
-      public IDisposable BeginScope<TState>(TState state)
-      {
-        return null;
-      }
+        public IDisposable BeginScope<TState>(TState state)
+        {
+            return null;
+        }
     }
-  }
 }

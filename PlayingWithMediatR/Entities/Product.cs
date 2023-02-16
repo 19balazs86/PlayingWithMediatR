@@ -1,15 +1,14 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PlayingWithMediatR.Entities
+namespace PlayingWithMediatR.Entities;
+
+public enum CategoryEnum
 {
-  public enum CategoryEnum
-  {
     Category1 = 1, Category2, Category3
-  }
+}
 
-  public class Product
-  {
+public sealed class Product
+{
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string Name { get; set; }
@@ -18,5 +17,4 @@ namespace PlayingWithMediatR.Entities
     public bool IsDeleted { get; set; }
     public DateTime CreatedDate { get; set; }
     public CategoryEnum CategoryEnum { get; set; }
-  }
 }

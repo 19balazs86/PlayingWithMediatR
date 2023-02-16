@@ -1,10 +1,9 @@
-﻿using System;
-using Serilog;
+﻿using Serilog;
 
-namespace PlayingWithMediatR.Exceptions
+namespace PlayingWithMediatR.Exceptions;
+
+public abstract class CustomExceptionBase : Exception
 {
-  public abstract class CustomExceptionBase : Exception
-  {
     public bool IsAlreadyWritten { get; protected set; }
 
 
@@ -17,11 +16,10 @@ namespace PlayingWithMediatR.Exceptions
 
     public virtual void LogErrorIfSo(string message, object[] objParams = null, bool forceToLog = false)
     {
-      if (IsAlreadyWritten && !forceToLog) return;
+        if (IsAlreadyWritten && !forceToLog) return;
 
-      Log.Error(this, message, objParams);
+        Log.Error(this, message, objParams);
 
-      IsAlreadyWritten = true;
+        IsAlreadyWritten = true;
     }
-  }
 }
