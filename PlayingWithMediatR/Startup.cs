@@ -25,9 +25,9 @@ public sealed class Startup
 
         // --> FluentValidation: Init
         // Warning: No longer recommend using auto-validation. Read the GitHub description
+        // Validators cannot run asynchronous rules. If you attempt to do so, you will receive an exception at runtime.
         // https://github.com/FluentValidation/FluentValidation.AspNetCore
-        // Asynchronous rules in validators will not be able to run. You will receive an exception at runtime
-        // BUT in this example the RequestValidationBehavior MediatR pipeline handle is with ValidateAsync method
+        // HOWEVER, in this example, the RequestValidationBehavior MediatR pipeline handles it with the ValidateAsync method.
         services
             .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
             .AddValidatorsFromAssemblyContaining<ProductValidator>();
