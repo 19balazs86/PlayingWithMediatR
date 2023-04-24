@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Exceptions;
@@ -32,13 +31,12 @@ public sealed class Startup
             .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
             .AddValidatorsFromAssemblyContaining<ProductValidator>();
 
-        // --> MediatR: Add pipeline behaviors
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestValidationBehavior<,>));
-
         // --> MediatR: Add
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblyContaining<Startup>();
+
+            config.AddOpenBehavior(typeof(RequestValidationBehavior<,>), ServiceLifetime.Transient);
 
             config.Lifetime = ServiceLifetime.Scoped;
         });
