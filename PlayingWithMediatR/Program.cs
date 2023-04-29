@@ -3,7 +3,7 @@ using Serilog.Events;
 
 namespace PlayingWithMediatR;
 
-public sealed class Program
+public static class Program
 {
     public static void Main(string[] args)
     {

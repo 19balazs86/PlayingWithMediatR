@@ -1,21 +1,20 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using MediatR;
+using MediatR.Pipeline;
 using PlayingWithMediatR.Exceptions;
 
 namespace PlayingWithMediatR.MediatR.Pipeline;
 
-public sealed class RequestValidationBehavior<TRequest, TResponse> :
-    IPipelineBehavior<TRequest, TResponse> where TRequest : notnull
+public sealed class ValidationPreProcessor<TRequest> : IRequestPreProcessor<TRequest>
 {
     private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-    public RequestValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
+    public ValidationPreProcessor(IEnumerable<IValidator<TRequest>> validators)
     {
         _validators = validators;
     }
 
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
         SummarizeValidationException validationException = await validateRequestAsync(request, cancellationToken);
 
@@ -24,8 +23,6 @@ public sealed class RequestValidationBehavior<TRequest, TResponse> :
 
         //if (!validateRequest(request, out var errors))
         //    throw new SummarizeValidationException(errors);
-
-        return await next();
     }
 
     private async Task<SummarizeValidationException> validateRequestAsync(TRequest request, CancellationToken ct)

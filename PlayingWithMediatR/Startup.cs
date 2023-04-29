@@ -29,14 +29,14 @@ public sealed class Startup
         // HOWEVER, in this example, the RequestValidationBehavior MediatR pipeline handles it with the ValidateAsync method.
         services
             .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
-            .AddValidatorsFromAssemblyContaining<ProductValidator>();
+            .AddValidatorsFromAssemblyContaining<ProductValidator>(ServiceLifetime.Scoped);
 
         // --> MediatR: Add
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblyContaining<Startup>();
 
-            config.AddOpenBehavior(typeof(RequestValidationBehavior<,>), ServiceLifetime.Transient);
+            config.AddOpenBehavior(typeof(RequestPipelineBehavior<,>), ServiceLifetime.Singleton);
 
             config.Lifetime = ServiceLifetime.Scoped;
         });
