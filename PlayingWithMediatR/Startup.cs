@@ -41,12 +41,12 @@ public sealed class Startup
             config.Lifetime = ServiceLifetime.Scoped;
         });
 
-        // --> EF: Use in-memory database
-        services.AddDbContext<DataBaseContext>(options =>
-          options
-            //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
-            //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
-            .UseInMemoryDatabase("dbName"));
+        // --> EF: Use in-memory | For better performance use AddDbContextPool instead of AddDbContext
+        services.AddDbContextPool<DataBaseContext>(options =>
+            options
+                //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
+                //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
+                .UseInMemoryDatabase("dbName"));
 
         // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
         services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
