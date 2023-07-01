@@ -22,6 +22,8 @@ public sealed class Startup
     {
         services.AddControllers(); // Old: .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
+        services.AddResponseCompression();
+
         // --> FluentValidation: Init
         // Warning: No longer recommend using auto-validation. Read the GitHub description
         // Validators cannot run asynchronous rules. If you attempt to do so, you will receive an exception at runtime.
@@ -69,6 +71,8 @@ public sealed class Startup
         //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
 
         app.UseRouting();
+
+        app.UseResponseCompression();
 
         app.UseEndpoints(endpoints =>
         {

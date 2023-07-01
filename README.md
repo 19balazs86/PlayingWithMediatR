@@ -23,10 +23,13 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 - [AutoMapper](https://github.com/AutoMapper/AutoMapper) with EF
   - [Getting Started with AutoMapper in ASP.NET Core](https://code-maze.com/automapper-net-core/) 📓*CodeMaze*
   - [Performance comparison of different mappers](https://youtu.be/U8gSdQN2jWI) 📽️*12m - Nick Chapsas - Mapperly, Automapper, AgileMapper, TinyMapper, Mapster, MappingGenerator*
+- [Response compression](https://www.milanjovanovic.tech/blog/response-compression-in-aspnetcore) 📓*Milan's newsletter*
 - [Running async tasks on app Startup](https://andrewlock.net/running-async-tasks-on-app-startup-in-asp-net-core-3) 📓*AndrewLock - Using HostedService*
 - How to log the generated SQL queries by the EF
 - Default 404 response. [Tips and tricks for ASP.NET Core applications](https://dusted.codes/advanced-tips-and-tricks-for-aspnet-core-applications) 📓*DustedCodes*
 - [Generating realistic data with Bogus](https://code-maze.com/data-generation-bogus-dotnet) 📓*CodeMaze*
+
 ---
-- [Publish MediatR Notifications in parallel](https://www.milanjovanovic.tech/blog/how-to-publish-mediatr-notifications-in-parallel) 📓*Milan*
+
+- [Publish MediatR Notifications in parallel](https://www.milanjovanovic.tech/blog/how-to-publish-mediatr-notifications-in-parallel) 📓*Milan's newsletter*
 - [Clean architecture](https://www.youtube.com/watch?v=5OtUm1BLmG0) 📽️1h | [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders) 👤*JasonTaylor*
