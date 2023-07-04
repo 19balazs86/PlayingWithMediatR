@@ -24,6 +24,8 @@ public static class CustomErrorHandlerExtensions
     }
 }
 
+// Middleware registration method you DON'T know
+// Codewrinkles: https://youtu.be/UHdXZCgUKas
 public sealed class ExceptionHandlerMiddleware
 {
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
