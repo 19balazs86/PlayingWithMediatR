@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
 using PlayingWithMediatR.MediatR.Pipeline;
-using PlayingWithMediatR.Validation;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text.Json;
@@ -31,16 +30,20 @@ public sealed class Startup
         // HOWEVER, in this example, the RequestValidationBehavior MediatR pipeline handles it with the ValidateAsync method.
         services
             .AddFluentValidationAutoValidation(options => options.DisableDataAnnotationsValidation = true)
-            .AddValidatorsFromAssemblyContaining<ProductValidator>(ServiceLifetime.Scoped);
+            .AddValidatorsFromAssemblyContaining<Startup>(ServiceLifetime.Singleton);
 
         // --> MediatR: Add
         services.AddMediatR(config =>
         {
             config.RegisterServicesFromAssemblyContaining<Startup>();
 
+            config.Lifetime = ServiceLifetime.Scoped;
+
+            // AddMediatR no longer scans the assemlby
+            // https://github.com/jbogard/MediatR/wiki/Migration-Guide-12.0-to-12.1
             config.AddOpenBehavior(typeof(RequestPipelineBehavior<,>), ServiceLifetime.Singleton);
 
-            config.Lifetime = ServiceLifetime.Scoped;
+            config.AddOpenRequestPreProcessor(typeof(ValidationPreProcessor<>), ServiceLifetime.Singleton);
         });
 
         // --> EF: Use in-memory | For better performance use AddDbContextPool instead of AddDbContext
