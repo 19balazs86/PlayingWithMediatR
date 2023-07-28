@@ -15,6 +15,7 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 - [Pipeline validation with FluentValidation](https://code-maze.com/cqrs-mediatr-fluentvalidation) 📓*CodeMaze*
 - To achieve model validation in the MediatR pipeline (instead of in the APIController), you need to [disable the built-in automatic model state validation](https://www.talkingdotnet.com/disable-automatic-model-state-validation-in-asp-net-core-2-1).
 - Custom error handling
+  - [Translating exceptions into Problem Details responses](https://timdeschryver.dev/blog/translating-exceptions-into-problem-details-responses) 📓*Tim Deschryver*
   - [Creating a custom ErrorHandlerMiddleware function](https://andrewlock.net/creating-a-custom-error-handler-middleware-function) 📓*AndrewLock*
   - [Global Error Handling in ASP.NET Core Web API](https://code-maze.com/global-error-handling-aspnetcore) 📓*CodeMaze*
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/index) 📚
