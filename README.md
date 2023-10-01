@@ -33,4 +33,6 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
 ---
 
 - [Publish MediatR Notifications in parallel](https://www.milanjovanovic.tech/blog/how-to-publish-mediatr-notifications-in-parallel) 📓*Milan's newsletter*
-- [Clean architecture](https://www.youtube.com/watch?v=5OtUm1BLmG0) 📽️1h | [NorthwindTraders](https://github.com/JasonGT/NorthwindTraders) 👤*JasonTaylor*
+- Clean architecture - JasonTaylor
+  - [Unleashing Clean Architecture in .NET 8](https://youtu.be/yB01HaG0i0w) 📽️*45m*
+  - [CleanArchitecture](https://github.com/jasontaylordev/CleanArchitecture) 👤*jasontaylordev*
