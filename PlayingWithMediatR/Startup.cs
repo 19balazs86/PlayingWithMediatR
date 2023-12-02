@@ -21,6 +21,10 @@ public sealed class Startup
     {
         services.AddControllers(); // Old: .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
+        services
+            .AddProblemDetails()
+            .AddExceptionHandler<GlobalExceptionHandler>();
+
         services.AddResponseCompression();
 
         // --> FluentValidation: Init
@@ -67,7 +71,10 @@ public sealed class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         // First: use our custom middleware to handle exceptions.
-        app.UseExceptionHandlingMiddleware();
+        //app.UseExceptionHandlingMiddleware();
+
+        // New in .NET 8
+        app.UseExceptionHandler();
 
         // This will handle the exception, like the middleware above.
         // But in addition, throws "An unhandled exception has occurred..."

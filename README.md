@@ -19,6 +19,7 @@ If you are familiar with *Command Query Responsibility Segregation* (CQRS), you 
   - [Translating exceptions into Problem Details responses](https://timdeschryver.dev/blog/translating-exceptions-into-problem-details-responses) 📓*Tim Deschryver*
   - [Creating a custom ErrorHandlerMiddleware function](https://andrewlock.net/creating-a-custom-error-handler-middleware-function) 📓*AndrewLock*
   - [Global Error Handling in ASP.NET Core Web API](https://code-maze.com/global-error-handling-aspnetcore) 📓*CodeMaze*
+  - [New way in ASP.NET 8 using IExceptionHandler](https://www.milanjovanovic.tech/blog/global-error-handling-in-aspnetcore-8) 📓*Milan's newsletter*
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/index) 📚
   - 📓*CodeMaze* - [Code-First approach](https://code-maze.com/net-core-web-api-ef-core-code-first/) and [Entity Framework Core Series](https://code-maze.com/entity-framework-core-series/)
   - [Learn Entity Framework Core](https://www.learnentityframeworkcore.com/) 📓
