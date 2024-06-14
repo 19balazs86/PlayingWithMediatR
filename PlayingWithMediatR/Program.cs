@@ -68,7 +68,7 @@ public sealed class Program
                     //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
                     .UseInMemoryDatabase("dbName"));
 
-            // --> Add AutoMapper. Install-Package AutoMapper.Extensions.Microsoft.DependencyInjection
+            // --> Add: AutoMapper
             services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
 
             // Customise: Default API behavour to let the program run the RequestValidationBehavior in the MediatR pipeline
@@ -92,8 +92,6 @@ public sealed class Program
             // This will handle the exception, like the middleware above.
             // But in addition, throws "An unhandled exception has occurred..."
             //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
-
-            app.UseRouting();
 
             app.UseResponseCompression();
 
