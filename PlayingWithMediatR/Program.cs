@@ -9,13 +9,12 @@ using PlayingWithMediatR.MediatR.Pipeline;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text.Json;
+using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlayingWithMediatR;
 
 public sealed class Program
 {
-    private const string _notFoundMessage = "The requested endpoint is not found.";
-
     public static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -95,7 +94,7 @@ public sealed class Program
 
     private static ProblemHttpResult endpointNotFoundHandler()
     {
-        return TypedResults.Problem(_notFoundMessage, statusCode: StatusCodes.Status404NotFound);
+        return TypedResults.Problem(_notFoundMessage, statusCode: Status404NotFound);
     }
 
 
@@ -103,14 +102,16 @@ public sealed class Program
     private static async Task pageNotFoundHandler(HttpContext context)
     {
         context.Response.ContentType = MediaTypeNames.Application.Json;
-        context.Response.StatusCode  = StatusCodes.Status404NotFound;
+        context.Response.StatusCode  = Status404NotFound;
 
         var problemDetails = new ProblemDetails
         {
-            Title  = "The requested endpoint is not found.",
-            Status = StatusCodes.Status404NotFound,
+            Title  = _notFoundMessage,
+            Status = Status404NotFound,
         };
 
         await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
     }
+
+    private const string _notFoundMessage = "The requested endpoint is not found.";
 }
