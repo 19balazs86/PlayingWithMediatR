@@ -83,9 +83,13 @@ public sealed class Program
 
             app.UseExceptionHandler(); // No need to apply appBuilder.UseCustomErrors, because we use services.AddExceptionHandler<GlobalExceptionHandler>
 
+            app.UseStatusCodePages(); // This middleware generates the response for status codes between 400-599 that do not have a body
+
             app.UseResponseCompression();
 
             app.MapControllers();
+
+            app.MapGet("/StatusCodeTest", statusCode_400_599_Test);
 
             app.MapFallback(endpointNotFoundHandler);
         }
@@ -96,6 +100,11 @@ public sealed class Program
     private static ProblemHttpResult endpointNotFoundHandler()
     {
         return TypedResults.Problem(_notFoundMessage, statusCode: StatusCodes.Status404NotFound);
+    }
+
+    private static StatusCodeHttpResult statusCode_400_599_Test()
+    {
+        return TypedResults.StatusCode(Random.Shared.Next(400, 599));
     }
 
 
