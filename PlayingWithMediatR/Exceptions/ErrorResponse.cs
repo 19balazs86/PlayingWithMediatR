@@ -17,7 +17,10 @@ public sealed class ErrorResponse : ProblemDetails
 
     public ErrorResponse(IDictionary<string, string[]> validationErrors, string traceId) : this(traceId)
     {
-        Status = Status400BadRequest; // using static
+        // 400 vs 422 for Client Error Request
+        // https://stackoverflow.com/questions/51990143/400-vs-422-for-client-error-request/52098667#52098667
+
+        Status = Status422UnprocessableEntity; // using static
         Title  = SummarizeValidationException.ErrorMessage;
 
         Errors = validationErrors;
