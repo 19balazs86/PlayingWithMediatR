@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using PlayingWithMediatR.Entities;
-using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.MediatR;
 using PlayingWithMediatR.Pagination;
 using static Microsoft.AspNetCore.Http.StatusCodes;
@@ -49,19 +48,8 @@ public sealed class ProductController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task Delete(int id)
     {
-        try
-        {
-            await _mediator.Send(new DeleteProduct(id));
-
-            return Ok();
-        }
-        catch (DeleteProductException ex)
-        {
-            ex.LogErrorIfSo($"Could not delete the product({id}).");
-
-            throw; // Custom middleware will catch thit exception.
-        }
+        await _mediator.Send(new DeleteProduct(id));
     }
 }

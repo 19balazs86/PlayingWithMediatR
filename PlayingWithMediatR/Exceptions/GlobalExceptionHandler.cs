@@ -4,16 +4,10 @@ namespace PlayingWithMediatR.Exceptions;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
-    private readonly ILogger<GlobalExceptionHandler> _logger;
-
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
-    {
-        _logger = logger;
-    }
-
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Exception handled by GlobalExceptionHandler");
+        // No need to log the error because app.UseExceptionHandler provides an ExceptionHandlerMiddleware, and it handles the logging
+        //_logger.LogError(exception, "Exception handled by GlobalExceptionHandler");
 
         var hostEnvironment = httpContext.RequestServices.GetRequiredService<IHostEnvironment>();
 

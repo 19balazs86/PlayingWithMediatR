@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
 using PlayingWithMediatR.MediatR.Pipeline;
-using Serilog;
-using Serilog.Events;
 using System.Net.Mime;
 using System.Reflection;
 using System.Text.Json;
@@ -23,8 +21,6 @@ public sealed class Program
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
         var services = builder.Services;
-
-        builder.Host.UseSerilog(configureLogger);
 
         // Add services to the container
         {
@@ -81,12 +77,11 @@ public sealed class Program
             // First: use our custom middleware to handle exceptions.
             //app.UseExceptionHandlingMiddleware();
 
-            // New in .NET 8
-            app.UseExceptionHandler();
-
             // This will handle the exception, like the middleware above.
             // But in addition, throws "An unhandled exception has occurred..."
-            //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(env));
+            //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(builder.Environment));
+
+            app.UseExceptionHandler(); // No need to apply appBuilder.UseCustomErrors, because we use services.AddExceptionHandler<GlobalExceptionHandler>
 
             app.UseResponseCompression();
 
@@ -117,17 +112,5 @@ public sealed class Program
         };
 
         await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
-    }
-
-    private static void configureLogger(HostBuilderContext context, LoggerConfiguration configuration)
-    {
-        configuration
-            .MinimumLevel.Debug()
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.Hosting", LogEventLevel.Information)
-            .MinimumLevel.Override("System", LogEventLevel.Warning)
-            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", LogEventLevel.Information)
-            //.Enrich.FromLogContext()
-            .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level}] {Message}{NewLine}{Exception}");
     }
 }

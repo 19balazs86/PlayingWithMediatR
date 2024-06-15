@@ -1,6 +1,6 @@
 ﻿namespace PlayingWithMediatR.Exceptions;
 
-public sealed class DeleteProductException : CustomExceptionBase
+public sealed class DeleteProductException : Exception
 {
     public DeleteProductException() : base() { }
 

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using Serilog;
 using System.Diagnostics;
 using System.Net.Mime;
 using System.Text.Json;
@@ -9,6 +8,8 @@ namespace PlayingWithMediatR.Exceptions;
 
 public static class CustomErrorHandlerExtensions
 {
+    public const string ErrorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
+
     public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder app)
         => app.UseMiddleware<ExceptionHandlerMiddleware>();
 
@@ -19,8 +20,12 @@ public static class CustomErrorHandlerExtensions
     {
         IExceptionHandlerFeature exceptionHandlerFeature = httpContext.Features.Get<IExceptionHandlerFeature>();
 
-        if (exceptionHandlerFeature is object)
+        // No need to log the error because app.UseExceptionHandler provides an ExceptionHandlerMiddleware, and it handles the logging
+
+        if (exceptionHandlerFeature is not null)
+        {
             await ExceptionHandlerMiddleware.WriteResponseAsync(httpContext, exceptionHandlerFeature.Error, includeDetails);
+        }
     }
 }
 
@@ -29,16 +34,18 @@ public static class CustomErrorHandlerExtensions
 public sealed class ExceptionHandlerMiddleware
 {
     private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull };
-    private const string _errorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
 
     private readonly RequestDelegate _next;
 
     private readonly bool _includeDetails;
 
-    public ExceptionHandlerMiddleware(RequestDelegate next, IHostEnvironment environment)
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger;
+
+    public ExceptionHandlerMiddleware(RequestDelegate next, IHostEnvironment environment, ILogger<ExceptionHandlerMiddleware> logger)
     {
-        _next = next;
+        _next           = next;
         _includeDetails = environment.IsDevelopment();
+        _logger         = logger;
     }
 
     public async Task InvokeAsync(HttpContext httpContext)
@@ -49,6 +56,11 @@ public sealed class ExceptionHandlerMiddleware
         }
         catch (Exception ex)
         {
+            if (ex is not SummarizeValidationException)
+            {
+                _logger.LogError(ex, CustomErrorHandlerExtensions.ErrorMessage);
+            }
+
             await WriteResponseAsync(httpContext, ex, _includeDetails);
         }
     }
@@ -57,20 +69,9 @@ public sealed class ExceptionHandlerMiddleware
     {
         string traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
 
-        ErrorResponse errorResponse;
-
-        if (ex is SummarizeValidationException svException) // Handle the Validation Exception.
-            errorResponse = new ErrorResponse(svException.Errors, traceId);
-        else
-        {
-            // To avoid multiple log.
-            if (ex is CustomExceptionBase customEx)
-                customEx.LogErrorIfSo(_errorMessage);
-            else
-                Log.Error(ex, _errorMessage);
-
-            errorResponse = new ErrorResponse(ex, includeDetails, traceId);
-        }
+        var errorResponse = ex is SummarizeValidationException svException ?
+            new ErrorResponse(svException.Errors, traceId) : // Handle as Validation Exception
+            new ErrorResponse(ex, includeDetails, traceId);
 
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
         httpContext.Response.StatusCode  = errorResponse.Status.GetValueOrDefault();
