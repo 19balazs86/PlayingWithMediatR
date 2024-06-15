@@ -20,6 +20,9 @@ public static class DataBaseInitializer
             .RuleFor(p => p.CategoryEnum, f => f.PickRandom<CategoryEnum>())
             .Generate(100);
 
+        // Bulk insert examples: https://www.milanjovanovic.tech/blog/fast-sql-bulk-inserts-with-csharp-and-ef-core
+        // https://github.com/borisdj/EFCore.BulkExtensions
+
         await context.Products.AddRangeAsync(products);
 
         await context.SaveChangesAsync();
