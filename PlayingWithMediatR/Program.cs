@@ -22,8 +22,7 @@ public sealed class Program
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-        var configuration = builder.Configuration;
-        var services      = builder.Services;
+        var services = builder.Services;
 
         builder.Host.UseSerilog(configureLogger);
 
@@ -61,12 +60,8 @@ public sealed class Program
             });
 
             // --> EF: Use in-memory | For better performance use AddDbContextPool instead of AddDbContext
-            // SQL Query in the log: "Microsoft.EntityFrameworkCore.Database.Command": "Information"
-            services.AddDbContextPool<DataBaseContext>(options =>
-                options
-                    //.LogTo(Console.WriteLine, new[] { RelationalEventId.CommandExecuted }) // EF5 + Microsoft.EntityFrameworkCore.Diagnostics
-                    //.UseLoggerFactory(EFSerilogLoggerProvider.LoggerFactory) // To see the EF logs.
-                    .UseInMemoryDatabase("dbName"));
+            // Show SQL Query in the log: "Microsoft.EntityFrameworkCore.Database.Command": "Information"
+            services.AddDbContextPool<DataBaseContext>(options => options.UseInMemoryDatabase("dbName"));
 
             // --> Add: AutoMapper
             services.AddAutoMapper(Assembly.GetExecutingAssembly()); // AppDomain.CurrentDomain.GetAssemblies()
