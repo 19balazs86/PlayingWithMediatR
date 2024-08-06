@@ -1,11 +1,5 @@
 ﻿namespace PlayingWithMediatR.Pagination;
 
-public sealed class PaginationDefaults
-{
-    public const int PageSize    = 15;
-    public const int MaxPageSize = 50;
-}
-
 public class PageQuery
 {
     private int _pageNumber;
@@ -20,12 +14,31 @@ public class PageQuery
     public int PageSize
     {
         get => _pageSize;
-        set => _pageSize = value <= 0 ? PaginationDefaults.PageSize : value < PaginationDefaults.MaxPageSize ? value : PaginationDefaults.MaxPageSize;
+        set => _pageSize = PaginationDefaults.CalculatePageSize(value);
     }
 
-    public PageQuery(int pageNumber = 1, int pageSize = PaginationDefaults.PageSize)
+    public PageQuery(int pageNumber = 1, int pageSize = PaginationDefaults.DefaultPageSize)
     {
         PageNumber = pageNumber;
         PageSize   = pageSize;
+    }
+}
+
+file static class PaginationDefaults
+{
+    public const int DefaultPageSize = 15;
+    public const int MaxPageSize = 50;
+
+    public static int CalculatePageSize(int pageSize)
+    {
+        // 0 < ... pageSize ... <= MaxPageSize
+        // (Fallback: DefaultPageSize) ... pageSize ... (Fallback: MaxPageSize)
+
+        return pageSize switch
+        {
+            <= 0          => DefaultPageSize,
+            > MaxPageSize => MaxPageSize,
+            _             => pageSize
+        };
     }
 }
