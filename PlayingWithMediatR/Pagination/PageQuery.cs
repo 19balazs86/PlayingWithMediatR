@@ -27,18 +27,12 @@ public class PageQuery
 file static class PaginationDefaults
 {
     public const int DefaultPageSize = 15;
-    public const int MaxPageSize = 50;
+    public const int MaxPageSize     = 50;
 
     public static int CalculatePageSize(int pageSize)
     {
-        // 0 < ... pageSize ... <= MaxPageSize
-        // (Fallback: DefaultPageSize) ... pageSize ... (Fallback: MaxPageSize)
+        pageSize = Math.Clamp(pageSize, 0, MaxPageSize);
 
-        return pageSize switch
-        {
-            <= 0          => DefaultPageSize,
-            > MaxPageSize => MaxPageSize,
-            _             => pageSize
-        };
+        return pageSize == 0 ? DefaultPageSize : pageSize;
     }
 }
