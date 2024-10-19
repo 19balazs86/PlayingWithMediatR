@@ -4,17 +4,25 @@ namespace PlayingWithMediatR.Exceptions;
 
 public sealed class GlobalExceptionHandler : IExceptionHandler
 {
-    public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    private readonly IProblemDetailsService _problemDetailsService;
+    private readonly bool _isDevelopment;
+
+    public GlobalExceptionHandler(IProblemDetailsService problemDetailsService, IHostEnvironment hostEnvironment)
     {
-        // No need to log the error because app.UseExceptionHandler provides an ExceptionHandlerMiddleware, and it handles the logging
-        //_logger.LogError(exception, "Exception handled by GlobalExceptionHandler");
+        _problemDetailsService = problemDetailsService;
 
-        var hostEnvironment = httpContext.RequestServices.GetRequiredService<IHostEnvironment>();
+        _isDevelopment = hostEnvironment.IsDevelopment();
+    }
 
-        bool isDevelopment = hostEnvironment.IsDevelopment();
+    public ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
+    {
+        // There is no need to log the error, as app.UseExceptionHandler provides an ExceptionHandlerMiddleware that handles the logging
+        // _logger.LogError(exception, "Exception handled by GlobalExceptionHandler");
 
-        await ExceptionHandlerMiddleware.WriteResponseAsync(httpContext, exception, isDevelopment);
+        ProblemDetailsContext pdContext = exception.ToProblemDetailsContext(httpContext, includeDetails: _isDevelopment);
 
-        return true;
+        httpContext.Response.StatusCode = pdContext.ProblemDetails.Status.GetValueOrDefault(StatusCodes.Status500InternalServerError);
+
+        return _problemDetailsService.TryWriteAsync(pdContext);
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
-using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -11,10 +11,14 @@ public static class CustomErrorHandlerExtensions
     public const string ErrorMessage = "Internal Server Error from the ExceptionHandlingMiddleware.";
 
     public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder app)
-        => app.UseMiddleware<ExceptionHandlerMiddleware>();
+    {
+        return app.UseMiddleware<ExceptionHandlerMiddleware>();
+    }
 
     public static void UseCustomErrors(this IApplicationBuilder appBuilder, IHostEnvironment environment)
-        => appBuilder.Run(httpContext => writeResponse(httpContext, environment.IsDevelopment()));
+    {
+        appBuilder.Run(httpContext => writeResponse(httpContext, environment.IsDevelopment()));
+    }
 
     private static async Task writeResponse(HttpContext httpContext, bool includeDetails)
     {
@@ -26,6 +30,42 @@ public static class CustomErrorHandlerExtensions
         {
             await ExceptionHandlerMiddleware.WriteResponseAsync(httpContext, exceptionHandlerFeature.Error, includeDetails);
         }
+    }
+
+    public static ProblemDetails ToProblemDetails(this Exception exception, bool includeDetails)
+    {
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status500InternalServerError,
+            Type   = exception.GetType().Name,
+            Title  = includeDetails ? $"An error occured: '{exception.Message}'" : "An error occured",
+            Detail = includeDetails ? exception.ToString() : null
+        };
+
+        if (exception is SummarizeValidationException svException)
+        {
+            // 400 vs 422 for Client Error Request
+            // https://stackoverflow.com/questions/51990143/400-vs-422-for-client-error-request/52098667#52098667
+
+            problemDetails.Status = StatusCodes.Status422UnprocessableEntity;
+            problemDetails.Title  = SummarizeValidationException.ErrorMessage;
+
+            problemDetails.Extensions.Add("errors", svException.Errors);
+        }
+
+        return problemDetails;
+    }
+
+    public static ProblemDetailsContext ToProblemDetailsContext(this Exception exception, HttpContext httpContext, bool includeDetails)
+    {
+        var problemDetails = exception.ToProblemDetails(includeDetails);
+
+        return new ProblemDetailsContext
+        {
+            Exception      = exception,
+            HttpContext    = httpContext,
+            ProblemDetails = problemDetails
+        };
     }
 }
 
@@ -67,15 +107,13 @@ public sealed class ExceptionHandlerMiddleware
 
     public static async Task WriteResponseAsync(HttpContext httpContext, Exception ex, bool includeDetails)
     {
-        string traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
+        // string traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier;
 
-        var errorResponse = ex is SummarizeValidationException svException ?
-            new ErrorResponse(svException.Errors, traceId) : // Handle as Validation Exception
-            new ErrorResponse(ex, includeDetails, traceId);
+        var problemDetails = ex.ToProblemDetails(includeDetails);
 
         httpContext.Response.ContentType = MediaTypeNames.Application.Json;
-        httpContext.Response.StatusCode  = errorResponse.Status.GetValueOrDefault();
+        httpContext.Response.StatusCode  = problemDetails.Status.GetValueOrDefault();
 
-        await JsonSerializer.SerializeAsync(httpContext.Response.Body, errorResponse, _jsonSerializerOptions);
+        await JsonSerializer.SerializeAsync(httpContext.Response.Body, problemDetails, _jsonSerializerOptions);
     }
 }

@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PlayingWithMediatR.Exceptions;
 using PlayingWithMediatR.Infrastructure;
 using PlayingWithMediatR.MediatR.Pipeline;
-using System.Net.Mime;
+using System.Diagnostics;
 using System.Reflection;
-using System.Text.Json;
 using static Microsoft.AspNetCore.Http.StatusCodes;
 
 namespace PlayingWithMediatR;
@@ -18,14 +18,13 @@ public sealed class Program
     public static void Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-        var services = builder.Services;
+        IServiceCollection services   = builder.Services;
 
         // Add services to the container
         {
             services.AddControllers(); // Old: .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ProductValidator>());
 
-            services.AddProblemDetails();
+            services.AddProblemDetails(configureProblemDetails);
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
 
@@ -76,11 +75,13 @@ public sealed class Program
             // First: use our custom middleware to handle exceptions.
             //app.UseExceptionHandlingMiddleware();
 
-            // This will handle the exception, like the middleware above.
-            // But in addition, throws "An unhandled exception has occurred..."
+            // This will handle the exception, similar to the middleware above.
+            // However, it also throws the message 'An unhandled exception has occurred'
             //app.UseExceptionHandler(appBuilder => appBuilder.UseCustomErrors(builder.Environment));
 
-            app.UseExceptionHandler(); // No need to apply appBuilder.UseCustomErrors, because we use services.AddExceptionHandler<GlobalExceptionHandler>
+            app.UseExceptionHandler(); // There is no need to apply appBuilder.UseCustomErrors, because we are using services.AddExceptionHandler<GlobalExceptionHandler>
+
+            app.UseStatusCodePages(); // Returns the Problem Details response for unsuccessful empty responses
 
             app.UseResponseCompression();
 
@@ -92,6 +93,22 @@ public sealed class Program
         app.Run();
     }
 
+    private static void configureProblemDetails(ProblemDetailsOptions options)
+    {
+        options.CustomizeProblemDetails = context =>
+        {
+            HttpContext httpContext = context.HttpContext;
+
+            Activity? activity = httpContext.Features.Get<IHttpActivityFeature>()?.Activity;
+
+            context.ProblemDetails.Instance = $"{httpContext.Request.Method} {httpContext.Request.Path}";
+
+            context.ProblemDetails.Extensions.TryAdd("requestId", httpContext.TraceIdentifier);
+
+            context.ProblemDetails.Extensions.TryAdd("traceId", activity?.Id);
+        };
+    }
+
     private static ProblemHttpResult endpointNotFoundHandler()
     {
         return TypedResults.Problem(_notFoundMessage, statusCode: Status404NotFound);
@@ -99,19 +116,19 @@ public sealed class Program
 
 
     // Use the simpler method: endpointNotFoundHandler
-    private static async Task pageNotFoundHandler(HttpContext context)
-    {
-        context.Response.ContentType = MediaTypeNames.Application.Json;
-        context.Response.StatusCode  = Status404NotFound;
+    //private static async Task pageNotFoundHandler(HttpContext context)
+    //{
+    //    context.Response.ContentType = MediaTypeNames.Application.Json;
+    //    context.Response.StatusCode  = Status404NotFound;
 
-        var problemDetails = new ProblemDetails
-        {
-            Title  = _notFoundMessage,
-            Status = Status404NotFound,
-        };
+    //    var problemDetails = new ProblemDetails
+    //    {
+    //        Title  = _notFoundMessage,
+    //        Status = Status404NotFound,
+    //    };
 
-        await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
-    }
+    //    await JsonSerializer.SerializeAsync(context.Response.Body, problemDetails);
+    //}
 
     private const string _notFoundMessage = "The requested endpoint is not found.";
 }

@@ -1,25 +1,24 @@
 # Playing with MediatR
 
-This ASP.NET web application serves as an example of how to use the [MediatR](https://github.com/jbogard/MediatR) framework.
+This ASP.NET web application demonstrates how to use the [MediatR](https://github.com/jbogard/MediatR) framework
 
-[Separate branch](https://github.com/19balazs86/PlayingWithMediatR/tree/netcoreapp2.2) with the .NET Core 2.2 version.
-
-#### What is MediatR?
+## What is MediatR?
 > Supports request/response, commands, queries, notifications and events, sync and async with intelligent dispatching via C# generic variance.
 
-If you are familiar with *Command Query Responsibility Segregation* (CQRS), you will find a common ground.
+If you are familiar with *Command Query Responsibility Segregation* (CQRS), you will find common ground.
 
-#### In the example you can find
+## In the example, you will find
 
 - [FluentValidation](https://fluentvalidation.net) to validate the MediatR pipeline
 - [Pipeline validation with FluentValidation](https://code-maze.com/cqrs-mediatr-fluentvalidation) 📓*CodeMaze*
-- To achieve model validation in the MediatR pipeline (instead of in the APIController), you need to [disable the built-in automatic model state validation](https://www.talkingdotnet.com/disable-automatic-model-state-validation-in-asp-net-core-2-1).
-- Custom error handling
-  - [Using IRequestExceptionHandler in MediatR requests](https://code-maze.com/csharp-global-exception-handling-for-mediatr-requests/) 📓*CodeMaze*
+- To achieve model validation in the MediatR pipeline (instead of in the APIController), you need to [disable the built-in automatic model state validation](https://www.talkingdotnet.com/disable-automatic-model-state-validation-in-asp-net-core-2-1)
+- Error handling
+  - [Problem Details and IExceptionHandler](https://www.milanjovanovic.tech/blog/problem-details-for-aspnetcore-apis) 📓*Milan's newsletter*
+  - [New way in ASP.NET 8 using IExceptionHandler](https://www.milanjovanovic.tech/blog/global-error-handling-in-aspnetcore-8) 📓*Milan's newsletter*
   - [Translating exceptions into Problem Details responses](https://timdeschryver.dev/blog/translating-exceptions-into-problem-details-responses) 📓*Tim Deschryver*
+  - [Using IRequestExceptionHandler in MediatR requests](https://code-maze.com/csharp-global-exception-handling-for-mediatr-requests/) 📓*CodeMaze*
   - [Creating a custom ErrorHandlerMiddleware function](https://andrewlock.net/creating-a-custom-error-handler-middleware-function) 📓*AndrewLock*
   - [Global Error Handling in ASP.NET Core Web API](https://code-maze.com/global-error-handling-aspnetcore) 📓*CodeMaze*
-  - [New way in ASP.NET 8 using IExceptionHandler](https://www.milanjovanovic.tech/blog/global-error-handling-in-aspnetcore-8) 📓*Milan's newsletter*
 - [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/index) 📚
   - 📓*CodeMaze* - [Code-First approach](https://code-maze.com/net-core-web-api-ef-core-code-first/) and [Entity Framework Core Series](https://code-maze.com/entity-framework-core-series/)
   - [Learn Entity Framework Core](https://www.learnentityframeworkcore.com/) 📓
